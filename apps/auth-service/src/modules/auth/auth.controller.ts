@@ -1,0 +1,142 @@
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  Query,
+  HttpCode,
+  HttpStatus,
+  Res,
+  Header,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
+import type { Request, Response } from 'express';
+import { AuthService } from './auth.service';
+import { RegisterDto } from './dto/register.dto';
+import { VerifyRegisterDto } from './dto/verifyRegister.dto';
+import { LocalAuthGuard } from './passport/local-auth.guard';
+import { Cookies, Info, Public, RateLimit, User } from '@common/core';
+import type { UserInterface } from 'src/entities/user.entities';
+
+function escapeHtmlAttr(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function verifyConfirmHtml(email: string, code: string): string {
+  const e = escapeHtmlAttr(email);
+  const c = escapeHtmlAttr(code);
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Verifying...</title></head><body><p>Verifying your email...</p><form id="f" method="POST" action="/auth/register/verify"><input type="hidden" name="email" value="${e}"><input type="hidden" name="code" value="${c}"></form><script>document.getElementById('f').submit();</script></body></html>`;
+}
+
+@Controller('auth/internal')
+export class AuthController {
+  constructor(private readonly authService: AuthService) {}
+
+  @Post('register')
+  @HttpCode(HttpStatus.CREATED)
+  @RateLimit({ prefix: 'auth:register:ip', limit: 5, window: 60, keySource: 'ip' })
+  async register(@Body() registerDto: RegisterDto, @Req() req: Request & { requestId: string }) {
+    return this.authService.register(registerDto, req.requestId);
+  }
+
+  @Post('register/verify')
+  @HttpCode(HttpStatus.OK)
+  async verify(@Body() verifyDto: VerifyRegisterDto) {
+    return this.authService.verify(verifyDto);
+  }
+
+  @Get('register/verify/confirm')
+  @Header('Content-Type', 'text/html; charset=utf-8')
+  confirmPage(@Query() verifyDto: VerifyRegisterDto, @Res() res: Response): void {
+    const html = verifyConfirmHtml(verifyDto.email ?? '', verifyDto.code ?? '');
+    res.send(html);
+  }
+  @Public()
+  @Post('resend-code')
+  @HttpCode(HttpStatus.OK)
+  @RateLimit([
+    { prefix: 'auth:resend:ip', limit: 5, window: 60, keySource: 'ip' },
+    { prefix: 'auth:resend:email', limit: 2, window: 60, keySource: 'body.email' },
+  ])
+  async resend(@Body('email') email: string) {
+    return this.authService.resendCode(email);
+  }
+
+  @UseGuards(LocalAuthGuard)
+  @Public()
+  @Post('login')
+  @HttpCode(HttpStatus.OK)
+  @RateLimit([
+    { prefix: 'auth:login:ip', limit: 10, window: 60, keySource: 'ip' },
+    { prefix: 'auth:login:email', limit: 5, window: 60, keySource: 'body.email' },
+  ])
+  async login(@Req() req: any, @Res({ passthrough: true }) res: Response) {
+    return this.authService.login(req.user, res, req);
+  }
+  @Post('refresh')
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @RateLimit({ prefix: 'auth:refresh:ip', limit: 20, window: 60, keySource: 'ip' })
+  async refresh(
+    @Cookies('refreshToken') refreshToken: string,
+    @Cookies('deviceId') deviceId: string,
+    @Res({ passthrough: true }) response: Response,
+    @Req() req,
+  ) {
+    return this.authService.refresh(refreshToken, deviceId, response, req);
+  }
+
+  @Get('me')
+  @HttpCode(HttpStatus.OK)
+  me(@Info('data') info: any) {
+    return this.authService.info(info.userId);
+  }
+
+  @Post('logout-device')
+  @HttpCode(HttpStatus.OK)
+  async logoutDevice(
+    @Req() req: Request,
+    @Cookies('deviceId') deviceId: string,
+    @Res({ passthrough: true }) response: Response,
+    @User() user: UserInterface,
+    @Cookies('refreshToken') refreshToken: string,
+  ) {
+    return this.authService.logoutDevice(deviceId, response, user, refreshToken);
+  }
+
+  @Post('logout-all')
+  @HttpCode(HttpStatus.OK)
+  async logoutAll(@Res({ passthrough: true }) response: Response, @User() user: UserInterface) {
+    return this.authService.logoutAll(response, user);
+  }
+
+  @Post('forgot/password')
+  @HttpCode(HttpStatus.OK)
+  @RateLimit([
+    { prefix: 'auth:forgot:ip', limit: 5, window: 600, keySource: 'ip' },
+    { prefix: 'auth:forgot:email', limit: 2, window: 600, keySource: 'body.email' },
+  ])
+  async forgotPassword(@Body() forgotPasswordDto: { email: string }) {
+    return this.authService.forgotPassword(forgotPasswordDto);
+  }
+  @Post('forgot/password/verify')
+  @HttpCode(HttpStatus.OK)
+  @RateLimit({ prefix: 'auth:forgot-verify:ip', limit: 10, window: 600, keySource: 'ip' })
+  async forgotPasswordVerify(@Body() forgotPasswordVerifyDto: { email: string; code: string }) {
+    return this.authService.forgotPasswordVerify(forgotPasswordVerifyDto);
+  }
+  @Post('forgot/password/reset')
+  @HttpCode(HttpStatus.OK)
+  @RateLimit({ prefix: 'auth:forgot-reset:ip', limit: 5, window: 600, keySource: 'ip' })
+  async forgotPasswordReset(
+    @Body() forgotPasswordResetDto: { email: string; code: string; password: string },
+  ) {
+    return this.authService.forgotPasswordReset(forgotPasswordResetDto);
+  }
+}
