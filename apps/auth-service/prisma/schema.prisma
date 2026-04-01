@@ -7,7 +7,11 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
+enum OutboxStatus {
+  PENDING
+  PROCESSED
+  FAILED
+}
 model User {
   id           String   @id @default(uuid())
   email        String   @unique
@@ -121,4 +125,17 @@ model PasswordReset {
 
   @@index([userId])
   @@map("passwordResets")
+}
+model Outbox {
+  id          String    @id @default(uuid()) // Nên dùng UUID để tránh đoán được số lượng event
+  topic       String    // Tên queue hoặc tên event (VD: 'user-sync-queue')
+  eventName   String    // Loại hành động (VD: 'user.updated', 'user.created')
+  payload     Json      // Dữ liệu thực tế sẽ ném vào Queue (VD: { userId: 5, name: "New Name" })
+  
+  status      OutboxStatus @default(PENDING) 
+  errorCount  Int       @default(0) // Đếm số lần gửi xịt
+  errorMessage String?  // Lưu lại lỗi nếu gửi xịt để dễ debug
+  
+  createdAt   DateTime  @default(now())
+  processedAt DateTime? // Thời điểm gửi thành công
 }

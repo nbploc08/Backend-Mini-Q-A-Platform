@@ -1,0 +1,95 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/content-client"
+}
+
+
+
+enum PostStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+}
+model UserReplica {
+  id        Int       @id 
+  name      String?
+  avatarUrl String?
+
+  posts     Post[]
+  questions Question[]
+  comments  Comment[]
+
+  @@map("user_replicas") 
+}
+
+
+model Post {
+  id        Int        @id @default(autoincrement())
+  title     String
+  content   String
+  status    PostStatus @default(DRAFT)
+  
+  authorId  Int        
+  author    UserReplica @relation(fields: [authorId], references: [id])
+
+  comments  Comment[]
+  
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([status])   
+  @@index([authorId]) 
+  
+  @@map("posts")
+}
+
+model Question {
+  id        Int       @id @default(autoincrement())
+  title     String
+  content   String
+  
+  authorId  Int       
+  author    UserReplica @relation(fields: [authorId], references: [id])
+
+  comments  Comment[]
+  
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  @@index([authorId])
+
+  @@map("questions")
+}
+
+model Comment {
+  id         Int       @id @default(autoincrement())
+  content    String
+  
+  authorId   Int       
+  author     UserReplica @relation(fields: [authorId], references: [id])
+
+  postId     Int?
+  post       Post?     @relation(fields: [postId], references: [id])
+  
+  questionId Int?
+  question   Question? @relation(fields: [questionId], references: [id])
+  
+  parentId   Int?      
+  parent     Comment?  @relation("CommentToComment", fields: [parentId], references: [id])
+  replies    Comment[] @relation("CommentToComment")
+  
+  replyToId  Int?
+  replyTo    Comment?  @relation("ReplyToTarget", fields: [replyToId], references: [id])
+  repliedBy  Comment[] @relation("ReplyToTarget")
+  createdAt  DateTime  @default(now())
+
+  @@index([postId])
+  @@index([questionId])
+
+  @@map("comments")
+}
