@@ -3,7 +3,10 @@ import type { SeedUserReplica } from './user-replica.seed';
 
 export type SeedPost = { id: number; authorId: number };
 
-export async function runPostSeed(prisma: PrismaClient, users: SeedUserReplica[]): Promise<SeedPost[]> {
+export async function runPostSeed(
+  prisma: PrismaClient,
+  users: SeedUserReplica[],
+): Promise<SeedPost[]> {
   await prisma.post.deleteMany({});
 
   const postsData = Array.from({ length: 30 }).map((_, i) => {
@@ -26,4 +29,3 @@ export async function runPostSeed(prisma: PrismaClient, users: SeedUserReplica[]
   console.log('Post seed OK:', created.length);
   return created;
 }
-

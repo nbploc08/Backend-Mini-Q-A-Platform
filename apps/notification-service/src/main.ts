@@ -14,7 +14,7 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 8002);
 
   console.log(
-    ` =======================-****** Notification service listening on port =======================-****** ${process.env.PORT ?? 8002}`,
+    ` =======================-****** Notification service listening on port ${process.env.PORT ?? 8002}=======================-****** `,
   );
 }
 

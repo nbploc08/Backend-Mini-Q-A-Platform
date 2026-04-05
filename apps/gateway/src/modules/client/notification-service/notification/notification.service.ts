@@ -9,7 +9,7 @@ export class NotificationService {
   private readonly client: AxiosInstance;
   private readonly baseURL: string;
   constructor(private config: ConfigService) {
-    this.baseURL = this.config.get<string>('NOTIFICATION_SERVICE_URL') || 'http://localhost:3002';
+    this.baseURL = this.config.get<string>('NOTIFICATION_SERVICE_URL') || 'http://localhost:8002';
     this.client = axios.create({
       baseURL: this.baseURL,
       timeout: 10_000,

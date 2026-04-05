@@ -1,4 +1,4 @@
-import { IsEmail, IsInt, IsString } from 'class-validator';
+import { IsArray, IsEmail, IsInt, IsString } from 'class-validator';
 
 export class loginResponseDto {
   @IsString()
@@ -7,6 +7,9 @@ export class loginResponseDto {
   email: string;
   @IsInt()
   permVersion: number;
+  @IsArray()
+  @IsString({ each: true })
+  roles: string[];
   @IsString()
   access_token: string;
 }

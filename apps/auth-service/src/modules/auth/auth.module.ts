@@ -6,12 +6,14 @@ import { AuthController } from './auth.controller';
 import { UsersModule } from 'src/modules/users/users.module';
 import { LocalStrategy } from './passport/local.strategy';
 import { QueueModule } from 'src/modules/queue/queue.module';
+import { RolesModule } from 'src/modules/roles/roles.module';
 
 @Module({
   imports: [
     QueueModule,
     ConfigModule,
     UsersModule,
+    RolesModule,
 
     JwtModule.registerAsync({
       imports: [ConfigModule],

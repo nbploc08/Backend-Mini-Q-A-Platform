@@ -24,7 +24,7 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 8001);
 
   console.log(
-    ` =======================-****** Auth service listening on port =======================-****** ${process.env.PORT ?? 8001}`,
+    ` =======================-****** Auth service listening on port  ${process.env.PORT ?? 8001}=======================-******`,
   );
 }
 bootstrap();
