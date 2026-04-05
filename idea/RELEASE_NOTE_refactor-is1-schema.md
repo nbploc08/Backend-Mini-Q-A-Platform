@@ -94,10 +94,10 @@
 
 **Migration required**: Yes
 
-| Service | Migration |
-|---|---|
-| `auth-service` | `prisma/migrations/20260401123527/` — thêm `Outbox` model |
-| `content-service` | `prisma/migrations/20260401123759/` — schema hoàn toàn mới |
+| Service                | Migration                                                                                                        |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `auth-service`         | `prisma/migrations/20260401123527/` — thêm `Outbox` model                                                        |
+| `content-service`      | `prisma/migrations/20260401123759/` — schema hoàn toàn mới                                                       |
 | `notification-service` | Cần `prisma migrate deploy` — đổi `type String` → enum `NotificationType`, đổi `data Json?` → `referenceId Int?` |
 
 > **Lưu ý notification**: bản ghi `Notification` cũ có `type` là string tùy ý sẽ fail migration nếu giá trị không khớp enum. Cần data migration trước.

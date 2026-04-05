@@ -21,7 +21,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InfoUserDto } from 'src/modules/users/dto/infoUser.dto';
 import { QueueService } from 'src/modules/queue/queue.service';
 import { PASSWORD_RESET_REQUESTED, PasswordResetRequestedSchema } from '@contracts/core';
-import { RolesService } from "../roles/roles.service";
+import { RolesService } from '../roles/roles.service';
 @Injectable()
 export class AuthService {
   constructor(
@@ -89,12 +89,12 @@ export class AuthService {
       secure: true,
       sameSite: 'strict',
     });
-      const result : loginResponseDto= {
-        id: user.id,
-        email: user.email,
-        permVersion: user.permVersion,
-        roles,
-        access_token: accessToken,
+    const result: loginResponseDto = {
+      id: user.id,
+      email: user.email,
+      permVersion: user.permVersion,
+      roles,
+      access_token: accessToken,
     };
 
     return result;
