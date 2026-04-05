@@ -1,7 +1,7 @@
 import type { PrismaClient } from '.prisma/content-client';
 import type { SeedUserReplica } from './user-replica.seed';
 
-export type SeedPost = { id: number; authorId: number };
+export type SeedPost = { id: number; authorId: string };
 
 export async function runPostSeed(
   prisma: PrismaClient,

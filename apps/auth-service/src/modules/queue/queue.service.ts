@@ -7,6 +7,7 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Queue } from 'bullmq';
 import { logger } from '@common/core';
+import { CREATE_USER_REP, CreateUserRepJob } from '@contracts/core/dist/jobs/createUser.jobs';
 
 @Injectable()
 export class QueueService implements OnModuleInit {
@@ -75,6 +76,17 @@ export class QueueService implements OnModuleInit {
         type: 'exponential',
         delay: 2000,
       },
+      removeOnFail: false,
+    });
+  }
+  async createUserJob(user: CreateUserRepJob){
+    await this.queue.add(CREATE_USER_REP, user, {
+      attempts: 4,
+      backoff: {
+        type: 'exponential',
+        delay: 2000,
+      },
+      removeOnFail: false,
     });
   }
 }

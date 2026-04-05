@@ -1,7 +1,7 @@
 import type { PrismaClient } from '.prisma/content-client';
 import type { SeedUserReplica } from './user-replica.seed';
 
-export type SeedQuestion = { id: number; authorId: number };
+export type SeedQuestion = { id: number; authorId: string };
 
 export async function runQuestionSeed(
   prisma: PrismaClient,
