@@ -13,10 +13,14 @@ import {
 import { CreateUserResponseDto } from './dto/resCreateUser.dto';
 import { UserAuthResponseDto } from './dto/userAuth.dto';
 import { InfoUserDto } from './dto/infoUser.dto';
+import { UserReplicaService } from '../user-replica/user-replica.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly userReplicaService: UserReplicaService,
+  ) {}
   async createPasswordReset(userId: string): Promise<any> {
     const token = Math.random().toString(36).substring(2, 15);
     const tokenHash = await hashPassword(token);
@@ -112,6 +116,11 @@ export class UsersService {
         email: true,
         createdAt: true,
       },
+    });
+    await this.userReplicaService.publishUserCreated({
+      id: user.id,
+      email: user.email,
+      name: dto.name,
     });
 
     await this.createOrUpdateEmailOtp(user.id, codeHash);

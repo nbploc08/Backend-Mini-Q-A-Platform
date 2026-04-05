@@ -16,7 +16,8 @@ enum PostStatus {
   REJECTED
 }
 model UserReplica {
-  id        Int       @id 
+  id        String @id
+  email     String
   name      String?
   avatarUrl String?
 
@@ -24,7 +25,7 @@ model UserReplica {
   questions Question[]
   comments  Comment[]
 
-  @@map("user_replicas") 
+  @@map("user_replicas")
 }
 
 
@@ -34,7 +35,7 @@ model Post {
   content   String
   status    PostStatus @default(DRAFT)
   
-  authorId  Int        
+  authorId  String
   author    UserReplica @relation(fields: [authorId], references: [id])
 
   comments  Comment[]
@@ -53,14 +54,14 @@ model Question {
   title     String
   content   String
   
-  authorId  Int       
+  authorId  String
   author    UserReplica @relation(fields: [authorId], references: [id])
 
   comments  Comment[]
-  
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([authorId])
 
   @@map("questions")
@@ -70,7 +71,7 @@ model Comment {
   id         Int       @id @default(autoincrement())
   content    String
   
-  authorId   Int       
+  authorId   String
   author     UserReplica @relation(fields: [authorId], references: [id])
 
   postId     Int?

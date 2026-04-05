@@ -14,6 +14,7 @@ import { AppService } from './app.service';
 import { JwtModule } from './modules/jwt/jwt.module';
 import { CombinedJwtAuthGuard } from './modules/jwt/strategy/jwt-auth.guard';
 import { PrismaModule } from './modules/prisma/prisma.module';
+import { JobsModule } from './modules/jobs/jobs.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { PrismaModule } from './modules/prisma/prisma.module';
     }),
     JwtModule,
     PrismaModule,
+    JobsModule,
     PermissionModule,
     RateLimiterModule.register(),
   ],
