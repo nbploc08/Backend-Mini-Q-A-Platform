@@ -52,4 +52,3 @@ export async function runNotificationSeed(prisma: PrismaClient) {
     sampleUserIds: userIds.slice(0, 2),
   });
 }
-

@@ -39,7 +39,7 @@ export class MailsService {
   }
 
   async sendVerifyCode(email: string, code: string) {
-    const baseUrl = process.env.VERIFY_LINK_BASE_URL || 'http://localhost:3001';
+    const baseUrl = process.env.AUTH_SERVICE_URL || 'http://localhost:8001';
     // Link trỏ tới trang confirm → form auto-submit POST /auth/register/verify
     const verifyUrl = `${baseUrl}/auth/register/verify/confirm?email=${encodeURIComponent(email)}&code=${encodeURIComponent(code)}`;
     return this.sendMail(
@@ -54,7 +54,7 @@ export class MailsService {
     );
   }
   async sendResetPassword(email: string, token: string) {
-    const baseUrl = process.env.VERIFY_LINK_BASE_URL || 'http://localhost:3001';
+    const baseUrl = process.env.AUTH_SERVICE_URL || 'http://localhost:8001';
     const resetPasswordUrl = `${baseUrl}/auth/reset-password?token=${encodeURIComponent(token)}`;
     return this.sendMail(
       email,

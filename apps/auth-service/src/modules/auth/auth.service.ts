@@ -21,6 +21,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InfoUserDto } from 'src/modules/users/dto/infoUser.dto';
 import { QueueService } from 'src/modules/queue/queue.service';
 import { PASSWORD_RESET_REQUESTED, PasswordResetRequestedSchema } from '@contracts/core';
+import { RolesService } from '../roles/roles.service';
 @Injectable()
 export class AuthService {
   constructor(
@@ -28,6 +29,7 @@ export class AuthService {
     private readonly natsService: NatsService,
     private readonly jwtService: JwtService,
     private readonly queueService: QueueService,
+    private readonly roleService: RolesService,
   ) {}
   private async getDeviceData(req: any): Promise<any> {
     const ip = req.headers['x-forwarded-for']?.toString().split(',')[0] || req.ip;
@@ -53,10 +55,12 @@ export class AuthService {
     deviceId: string,
     refreshTokenOld?: string,
   ): Promise<loginResponseDto> {
+    const roles = await this.roleService.getRolesForUser(user.id);
     const payload = {
       email: user.email,
       sub: user.id,
       permVersion: user.permVersion,
+      roles,
     };
 
     const refreshToken = this.jwtService.sign(payload, {
@@ -85,13 +89,15 @@ export class AuthService {
       secure: true,
       sameSite: 'strict',
     });
-
-    return {
+    const result: loginResponseDto = {
       id: user.id,
       email: user.email,
       permVersion: user.permVersion,
+      roles,
       access_token: accessToken,
-    } as loginResponseDto;
+    };
+
+    return result;
   }
 
   async register(dto: RegisterDto, requestId: string): Promise<RegisterResponseDto> {
@@ -155,7 +161,7 @@ export class AuthService {
         },
         'Login success',
       );
-      return result as loginResponseDto;
+      return result;
     } catch (error) {
       if (error instanceof ServiceError) throw error;
       logger.warn(

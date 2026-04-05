@@ -13,7 +13,7 @@ export class RoleClientService {
     private config: ConfigService,
     private internalJwt: InternalJwtService,
   ) {
-    this.baseURL = this.config.get<string>('AUTH_SERVICE_URL') || 'http://localhost:3001';
+    this.baseURL = this.config.get<string>('AUTH_SERVICE_URL') || 'http://localhost:8001';
     this.client = axios.create({
       baseURL: this.baseURL,
       timeout: 10_000,

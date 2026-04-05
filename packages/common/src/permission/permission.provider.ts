@@ -60,7 +60,7 @@ export class PermissionProvider {
       const baseUrl =
         authServiceUrl ||
         this.configService.get<string>('AUTH_SERVICE_URL') ||
-        'http://localhost:3001';
+        'http://localhost:8001';
 
       this.logger.debug(`Fetching permissions for user ${userId} from ${baseUrl}`);
 

@@ -61,4 +61,3 @@ export async function runCommentSeed(
   const total = await prisma.comment.count();
   console.log('Comment seed OK:', total);
 }
-

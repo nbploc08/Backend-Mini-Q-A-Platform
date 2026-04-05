@@ -126,4 +126,3 @@ export class InternalJwtStrategy extends PassportStrategy(Strategy, 'internal-jw
     };
   }
 }
-

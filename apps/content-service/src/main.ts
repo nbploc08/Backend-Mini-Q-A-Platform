@@ -24,7 +24,7 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 8003);
 
   console.log(
-    ` =======================-****** Content service listening on port =======================-****** ${process.env.PORT ?? 8003}`,
+    ` =======================-****** Content service listening on port ${process.env.PORT ?? 8003} =======================-****** `,
   );
 }
 
