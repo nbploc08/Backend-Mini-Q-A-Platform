@@ -79,7 +79,7 @@ export class QueueService implements OnModuleInit {
       removeOnFail: false,
     });
   }
-  async createUserJob(user: CreateUserRepJob){
+  async createUserJob(user: CreateUserRepJob) {
     await this.queue.add(CREATE_USER_REP, user, {
       attempts: 4,
       backoff: {

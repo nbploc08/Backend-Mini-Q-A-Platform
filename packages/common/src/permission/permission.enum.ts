@@ -22,4 +22,7 @@ export enum PermissionCode {
   // Admin
   ADMIN_MANAGE_USERS = 'admin:manage-users',
   ADMIN_MANAGE_ROLES = 'admin:manage-roles',
+
+  // Posts moderation
+  POSTS_MODERATE = 'posts:moderate',
 }

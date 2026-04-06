@@ -15,6 +15,9 @@ import { JwtModule } from './modules/jwt/jwt.module';
 import { CombinedJwtAuthGuard } from './modules/jwt/strategy/jwt-auth.guard';
 import { PrismaModule } from './modules/prisma/prisma.module';
 import { JobsModule } from './modules/jobs/jobs.module';
+import { PostsModule } from './modules/posts/posts.module';
+import { QuestionsModule } from './modules/questions/questions.module';
+import { CommentsModule } from './modules/comments/comments.module';
 
 @Module({
   imports: [
@@ -29,6 +32,9 @@ import { JobsModule } from './modules/jobs/jobs.module';
     JwtModule,
     PrismaModule,
     JobsModule,
+    PostsModule,
+    QuestionsModule,
+    CommentsModule,
     PermissionModule,
     RateLimiterModule.register(),
   ],
