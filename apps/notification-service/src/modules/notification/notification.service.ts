@@ -37,7 +37,7 @@ export class NotificationService {
         title: payLoad.title,
         body: payLoad.body,
         type: payLoad.type,
-        data: payLoad.data,
+        referenceId: payLoad.referenceId,
       },
     });
     const unreadCount = await this.unreadCount(noti.userId);
@@ -48,7 +48,7 @@ export class NotificationService {
       type: noti.type,
       title: noti.title,
       body: noti.body,
-      data: noti.data,
+      data: payLoad.data,
       actionCreatedAt: payLoad.data?.actionCreatedAt ?? new Date().toISOString(),
       unreadCount: unreadCount.count,
     };
@@ -60,7 +60,7 @@ export class NotificationService {
       title: noti.title,
       body: noti.body,
       type: noti.type,
-      data: noti.data,
+      referenceId: noti.referenceId,
       readAt: noti.readAt ? noti.readAt.toISOString() : null,
       createdAt: noti.createdAt.toISOString(),
     };

@@ -3,10 +3,7 @@ import { Processor, WorkerHost, InjectQueue } from '@nestjs/bullmq';
 import { ErrorCodes, logger, ServiceError } from '@common/core';
 import { HttpStatus, OnModuleInit } from '@nestjs/common';
 import { PASSWORD_RESET_REQUESTED } from '@contracts/core';
-import {
-  CREATE_USER_REP,
-  CreateUserRepSchema,
-} from '@contracts/core/dist/jobs/createUser.jobs';
+import { CREATE_USER_REP, CreateUserRepSchema } from '@contracts/core/dist/jobs/createUser.jobs';
 import { UserReplicaService } from 'src/modules/user-replica/user-replica.service';
 
 @Processor('mail')

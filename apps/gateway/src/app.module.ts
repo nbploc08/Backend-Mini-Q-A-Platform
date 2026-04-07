@@ -8,6 +8,10 @@ import { JwtAuthGuard } from './modules/internal-jwt/strategy/jwt-auth.guard';
 import { AuthClientModule } from './modules/client/auth-service/auth/auth-client.module';
 import { RoleClientModule } from './modules/client/auth-service/role/role-client.module';
 import { NotificationModule } from './modules/client/notification-service/notification/notification.module';
+import { PostsClientModule } from './modules/client/content-service/posts/posts.module';
+import { QuestionsClientModule } from './modules/client/content-service/questions/questions.module';
+import { CommentsClientModule } from './modules/client/content-service/comments/comments.module';
+import { CloudinaryClientModule } from './modules/client/content-service/cloudinary/cloudinary-client.module';
 import {
   NatsModule,
   PermissionGuard,
@@ -28,6 +32,10 @@ import { WebsocketModule } from './modules/websocket';
     AuthClientModule,
     RoleClientModule,
     NotificationModule,
+    PostsClientModule,
+    QuestionsClientModule,
+    CommentsClientModule,
+    CloudinaryClientModule,
     PermissionModule,
     RateLimiterModule.register(),
     PrismaModule,
