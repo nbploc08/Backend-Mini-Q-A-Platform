@@ -136,7 +136,6 @@ export class PostsService {
       newStatus = PostStatus.PENDING;
     }
 
-
     return this.prisma.post.update({
       where: { id },
       data: {

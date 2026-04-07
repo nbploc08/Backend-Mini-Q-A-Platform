@@ -5,7 +5,6 @@ import { InternalJwtService } from 'src/modules/internal-jwt/internal-jwt.servic
 import { handleAxiosError } from '@common/core';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { RejectPostDto } from './dto/reject-post.dto';
 
 @Injectable()
 export class PostsClientService {
@@ -173,7 +172,7 @@ export class PostsClientService {
 
   async reject(id: number, authToken: string, requestId: string) {
     try {
-      const response = await this.client.patch(`posts/internal/${id}/reject`,  {
+      const response = await this.client.patch(`posts/internal/${id}/reject`, {
         headers: this.getHeaders(requestId, authToken),
       });
       if (response.status >= 400) {

@@ -20,18 +20,12 @@ export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
   @Post()
-  create(
-    @Body() createCommentDto: CreateCommentDto,
-    @User('userId') userId: string,
-  ) {
+  create(@Body() createCommentDto: CreateCommentDto, @User('userId') userId: string) {
     return this.commentsService.create(createCommentDto, userId);
   }
 
   @Get('post/:postId')
-  findByPost(
-    @Param('postId', ParseIntPipe) postId: number,
-    @Query() query: QueryCommentDto,
-  ) {
+  findByPost(@Param('postId', ParseIntPipe) postId: number, @Query() query: QueryCommentDto) {
     return this.commentsService.findByPost(postId, query);
   }
 
@@ -58,10 +52,7 @@ export class CommentsController {
   }
 
   @Delete(':id')
-  remove(
-    @Param('id', ParseIntPipe) id: number,
-    @User('userId') userId: string,
-  ) {
+  remove(@Param('id', ParseIntPipe) id: number, @User('userId') userId: string) {
     return this.commentsService.remove(id, userId);
   }
 }

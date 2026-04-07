@@ -17,7 +17,6 @@ import { Public, RateLimit } from '@common/core';
 import { PostsClientService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { RejectPostDto } from './dto/reject-post.dto';
 
 @Controller('client/posts')
 @RateLimit({ prefix: 'api:posts', limit: 60, window: 60, keySource: 'userId' })
@@ -102,7 +101,7 @@ export class PostsClientController {
     @Headers('authorization') auth: string,
     @Req() req: any,
   ) {
-    return this.postsService.reject(id,  auth, req.requestId);
+    return this.postsService.reject(id, auth, req.requestId);
   }
 
   @Delete(':id')

@@ -20,10 +20,7 @@ export class QuestionsController {
   constructor(private readonly questionsService: QuestionsService) {}
 
   @Post()
-  create(
-    @Body() createQuestionDto: CreateQuestionDto,
-    @User('userId') userId: string,
-  ) {
+  create(@Body() createQuestionDto: CreateQuestionDto, @User('userId') userId: string) {
     return this.questionsService.create(createQuestionDto, userId);
   }
 
@@ -33,10 +30,7 @@ export class QuestionsController {
   }
 
   @Get('my')
-  findMyQuestions(
-    @User('userId') userId: string,
-    @Query() query: QueryQuestionDto,
-  ) {
+  findMyQuestions(@User('userId') userId: string, @Query() query: QueryQuestionDto) {
     return this.questionsService.findMyQuestions(userId, query);
   }
 
@@ -55,10 +49,7 @@ export class QuestionsController {
   }
 
   @Delete(':id')
-  remove(
-    @Param('id', ParseIntPipe) id: number,
-    @User('userId') userId: string,
-  ) {
+  remove(@Param('id', ParseIntPipe) id: number, @User('userId') userId: string) {
     return this.questionsService.remove(id, userId);
   }
 }

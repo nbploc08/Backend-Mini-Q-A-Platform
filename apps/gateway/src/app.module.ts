@@ -11,6 +11,7 @@ import { NotificationModule } from './modules/client/notification-service/notifi
 import { PostsClientModule } from './modules/client/content-service/posts/posts.module';
 import { QuestionsClientModule } from './modules/client/content-service/questions/questions.module';
 import { CommentsClientModule } from './modules/client/content-service/comments/comments.module';
+import { CloudinaryClientModule } from './modules/client/content-service/cloudinary/cloudinary-client.module';
 import {
   NatsModule,
   PermissionGuard,
@@ -34,6 +35,7 @@ import { WebsocketModule } from './modules/websocket';
     PostsClientModule,
     QuestionsClientModule,
     CommentsClientModule,
+    CloudinaryClientModule,
     PermissionModule,
     RateLimiterModule.register(),
     PrismaModule,

@@ -14,17 +14,13 @@ import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { QueryPostDto } from './dto/query-post.dto';
-import { RejectPostDto } from './dto/reject-post.dto';
 
 @Controller('posts/internal')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Post()
-  create(
-    @Body() createPostDto: CreatePostDto,
-    @User('userId') userId: string,
-  ) {
+  create(@Body() createPostDto: CreatePostDto, @User('userId') userId: string) {
     return this.postsService.create(createPostDto, userId);
   }
 
@@ -34,10 +30,7 @@ export class PostsController {
   }
 
   @Get('my')
-  findMyPosts(
-    @User('userId') userId: string,
-    @Query() query: QueryPostDto,
-  ) {
+  findMyPosts(@User('userId') userId: string, @Query() query: QueryPostDto) {
     return this.postsService.findMyPosts(userId, query);
   }
 
@@ -56,10 +49,7 @@ export class PostsController {
   }
 
   @Patch(':id/submit')
-  submit(
-    @Param('id', ParseIntPipe) id: number,
-    @User('userId') userId: string,
-  ) {
+  submit(@Param('id', ParseIntPipe) id: number, @User('userId') userId: string) {
     return this.postsService.submit(id, userId);
   }
 
@@ -71,17 +61,12 @@ export class PostsController {
 
   @Patch(':id/reject')
   @RequirePermission(PermissionCode.POSTS_MODERATE)
-  reject(
-    @Param('id', ParseIntPipe) id: number,
-  ) {
+  reject(@Param('id', ParseIntPipe) id: number) {
     return this.postsService.reject(id);
   }
 
   @Delete(':id')
-  remove(
-    @Param('id', ParseIntPipe) id: number,
-    @User('userId') userId: string,
-  ) {
+  remove(@Param('id', ParseIntPipe) id: number, @User('userId') userId: string) {
     return this.postsService.remove(id, userId);
   }
 }

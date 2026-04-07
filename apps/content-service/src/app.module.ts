@@ -18,6 +18,7 @@ import { JobsModule } from './modules/jobs/jobs.module';
 import { PostsModule } from './modules/posts/posts.module';
 import { QuestionsModule } from './modules/questions/questions.module';
 import { CommentsModule } from './modules/comments/comments.module';
+import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { CommentsModule } from './modules/comments/comments.module';
     PostsModule,
     QuestionsModule,
     CommentsModule,
+    CloudinaryModule,
     PermissionModule,
     RateLimiterModule.register(),
   ],

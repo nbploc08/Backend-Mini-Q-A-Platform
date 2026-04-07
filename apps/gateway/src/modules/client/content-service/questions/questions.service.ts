@@ -54,12 +54,7 @@ export class QuestionsClientService {
     }
   }
 
-  async findAll(
-    requestId: string,
-    authToken?: string,
-    page?: string,
-    per_page?: string,
-  ) {
+  async findAll(requestId: string, authToken?: string, page?: string, per_page?: string) {
     try {
       const response = await this.client.get('questions/internal', {
         headers: this.getHeaders(requestId, authToken),
@@ -77,12 +72,7 @@ export class QuestionsClientService {
     }
   }
 
-  async findMyQuestions(
-    authToken: string,
-    requestId: string,
-    page?: string,
-    per_page?: string,
-  ) {
+  async findMyQuestions(authToken: string, requestId: string, page?: string, per_page?: string) {
     try {
       const response = await this.client.get('questions/internal/my', {
         headers: this.getHeaders(requestId, authToken),
