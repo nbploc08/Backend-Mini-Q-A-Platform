@@ -138,7 +138,7 @@ export class PostsClientService {
 
   async submit(id: number, authToken: string, requestId: string) {
     try {
-      const response = await this.client.patch(`posts/internal/${id}/submit`, null, {
+      const response = await this.client.patch(`posts/internal/${id}/submit`, {}, {
         headers: this.getHeaders(requestId, authToken),
       });
       if (response.status >= 400) {
@@ -155,7 +155,7 @@ export class PostsClientService {
 
   async approve(id: number, authToken: string, requestId: string) {
     try {
-      const response = await this.client.patch(`posts/internal/${id}/approve`, null, {
+      const response = await this.client.patch(`posts/internal/${id}/approve`, {}, {
         headers: this.getHeaders(requestId, authToken),
       });
       if (response.status >= 400) {
