@@ -1,20 +1,21 @@
 import {
-  PASSWORD_RESET_REQUESTED,
-  PasswordResetRequestedEvent,
-  UserRegisteredEvent,
+  POST_APPROVE,
+  PostApproveJob,
+  POST_REJECT,
+  PostRejectJob,
+  COMMENT_ON_POST,
+  CommentOnPostJob,
+  COMMENT_REPLY,
+  CommentReplyJob,
 } from '@contracts/core';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Queue } from 'bullmq';
 import { logger } from '@common/core';
-import { CREATE_USER_REP, CreateUserRepJob } from '@contracts/core/dist/jobs/createUser.jobs';
 
 @Injectable()
 export class QueueService implements OnModuleInit {
-  constructor(
-    @InjectQueue('notification-service') private queue: Queue,
-    @InjectQueue('content-service') private contentQueue: Queue,
-  ) {}
+  constructor(@InjectQueue('notification-service') private queue: Queue) {}
 
   async onModuleInit() {
     this.queue.removeAllListeners('error');
@@ -68,11 +69,9 @@ export class QueueService implements OnModuleInit {
       }
     }
   }
-  async sendVerifyCode(userRegisteredEvent: UserRegisteredEvent) {
-    await this.queue.add('send-verify-code', userRegisteredEvent);
-  }
-  async sendResetPassword(passwordResetRequestedEvent: PasswordResetRequestedEvent) {
-    await this.queue.add(PASSWORD_RESET_REQUESTED, passwordResetRequestedEvent, {
+
+  async approvePost(data: PostApproveJob) {
+    await this.queue.add(POST_APPROVE, data, {
       attempts: 3,
       backoff: {
         type: 'exponential',
@@ -81,9 +80,32 @@ export class QueueService implements OnModuleInit {
       removeOnFail: false,
     });
   }
-  async createUserJob(user: CreateUserRepJob) {
-    await this.contentQueue.add(CREATE_USER_REP, user, {
-      attempts: 4,
+
+  async rejectPost(data: PostRejectJob) {
+    await this.queue.add(POST_REJECT, data, {
+      attempts: 3,
+      backoff: {
+        type: 'exponential',
+        delay: 2000,
+      },
+      removeOnFail: false,
+    });
+  }
+
+  async commentOnPost(data: CommentOnPostJob) {
+    await this.queue.add(COMMENT_ON_POST, data, {
+      attempts: 3,
+      backoff: {
+        type: 'exponential',
+        delay: 2000,
+      },
+      removeOnFail: false,
+    });
+  }
+
+  async commentReply(data: CommentReplyJob) {
+    await this.queue.add(COMMENT_REPLY, data, {
+      attempts: 3,
       backoff: {
         type: 'exponential',
         delay: 2000,

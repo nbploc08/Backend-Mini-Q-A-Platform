@@ -2,15 +2,14 @@ import { Job, Queue } from 'bullmq';
 import { Processor, WorkerHost, InjectQueue } from '@nestjs/bullmq';
 import { ErrorCodes, logger, ServiceError } from '@common/core';
 import { HttpStatus, OnModuleInit } from '@nestjs/common';
-import { PASSWORD_RESET_REQUESTED } from '@contracts/core';
 import { CREATE_USER_REP, CreateUserRepSchema } from '@contracts/core/dist/jobs/createUser.jobs';
 import { UserReplicaService } from 'src/modules/user-replica/user-replica.service';
 
-@Processor('mail')
+@Processor('content-service')
 export class JobsService extends WorkerHost implements OnModuleInit {
   constructor(
-    @InjectQueue('mail') private readonly queue: Queue,
-    @InjectQueue('mail-dlq') private readonly dlqQueue: Queue,
+    @InjectQueue('content-service') private readonly queue: Queue,
+    @InjectQueue('content-service-dlq') private readonly dlqQueue: Queue,
     private readonly userReplicaService: UserReplicaService,
   ) {
     super();
@@ -66,7 +65,7 @@ export class JobsService extends WorkerHost implements OnModuleInit {
       logger.error(
         {
           event: 'bullmq.job.failed',
-          queue: 'mail',
+          queue: 'content-service',
           requestId,
           jobName,
           attemptsMade,
@@ -78,7 +77,7 @@ export class JobsService extends WorkerHost implements OnModuleInit {
 
       try {
         await this.dlqQueue.add(
-          'failed-mail-job',
+          'failed-content-job',
           {
             originalJobId: requestId,
             jobName,
@@ -105,14 +104,14 @@ export class JobsService extends WorkerHost implements OnModuleInit {
         logger.error('Failed to establish initial Redis connection: Connection refused');
       } else {
         const message =
-          error.name === 'AggregateError' && 'errors' in error
-            ? (error as any).errors.map((e: any) => e.message).join(', ')
-            : error.message;
+          err.name === 'AggregateError' && 'errors' in err
+            ? (err as any).errors.map((e: any) => e.message).join(', ')
+            : err.message;
 
         logger.error(
           {
             message,
-            code: (error as any).code,
+            code: err.code,
           },
           'Redis connection failed',
         );
@@ -149,52 +148,6 @@ export class JobsService extends WorkerHost implements OnModuleInit {
         }
         break;
       }
-
-      case 'send-verify-code':
-        try {
-          logger.info(`Send verify code to ${job.data.email}`);
-        } catch (error) {
-          const err = error instanceof Error ? error : new Error(String(error));
-          logger.error(
-            {
-              error: err.message,
-              stack: err.stack,
-              jobId: job.id,
-              jobName: job.name,
-              email: job.data.email,
-            },
-            'Error sending verify code',
-          );
-          throw new ServiceError({
-            code: ErrorCodes.INTERNAL,
-            statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-            message: `Error sending verify code: ${err.message}`,
-          });
-        }
-        break;
-
-      case PASSWORD_RESET_REQUESTED:
-        try {
-          logger.info(`Send reset password to ${job.data.email}`);
-        } catch (error) {
-          const err = error instanceof Error ? error : new Error(String(error));
-          logger.error(
-            {
-              error: err.message,
-              jobId: job.id,
-              email: job.data.email,
-              token: job.data.token,
-            },
-            'Error sending reset password',
-          );
-          throw new ServiceError({
-            code: ErrorCodes.INTERNAL,
-            statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-            message: `Error sending reset password: ${err.message}`,
-          });
-        }
-        break;
-
       default:
         logger.warn({ jobId: job.id, jobName: job.name }, 'Unhandled BullMQ job name');
     }

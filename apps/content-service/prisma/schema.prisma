@@ -37,6 +37,7 @@ model Post {
   
   authorId  String
   author    UserReplica @relation(fields: [authorId], references: [id])
+  avatarUrl String?
 
   comments  Comment[]
   
@@ -56,6 +57,7 @@ model Question {
   
   authorId  String
   author    UserReplica @relation(fields: [authorId], references: [id])
+  avatarUrl String?
 
   comments  Comment[]
 
@@ -70,13 +72,14 @@ model Question {
 model Comment {
   id         Int       @id @default(autoincrement())
   content    String
-  
+  avatarUrl String?
+
   authorId   String
   author     UserReplica @relation(fields: [authorId], references: [id])
 
   postId     Int?
   post       Post?     @relation(fields: [postId], references: [id])
-  
+
   questionId Int?
   question   Question? @relation(fields: [questionId], references: [id])
   

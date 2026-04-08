@@ -4,15 +4,15 @@ import { NotificationType } from '.prisma/notification-client';
 export class CreateNotificationDto {
   @IsNotEmpty()
   @IsString()
-  userId: string;
+  userId!: string;
 
   @IsNotEmpty()
   @IsEnum(NotificationType)
-  type: NotificationType;
+  type!: NotificationType;
 
   @IsString()
   @IsNotEmpty()
-  title: string;
+  title!: string;
 
   @IsOptional()
   @IsString()
@@ -21,7 +21,4 @@ export class CreateNotificationDto {
   @IsOptional()
   @IsInt()
   referenceId?: number;
-
-  @IsOptional()
-  data?: any;
 }

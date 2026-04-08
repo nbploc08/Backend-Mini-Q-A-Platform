@@ -5,13 +5,19 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { QueryPostDto } from './dto/query-post.dto';
+import { QueueService } from 'src/modules/queue/queue.service';
+
+import { PostApproveSchema, PostRejectSchema } from '@contracts/core';
 
 @Injectable()
 export class PostsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly queueService: QueueService,
+  ) {}
 
   async create(dto: CreatePostDto, authorId: string) {
-    return this.prisma.post.create({
+    const result = await this.prisma.post.create({
       data: {
         title: dto.title,
         content: dto.content,
@@ -20,6 +26,8 @@ export class PostsService {
       },
       include: { author: { select: { id: true, name: true, email: true } } },
     });
+
+    return result;
   }
 
   async findAll(query: QueryPostDto) {
@@ -199,11 +207,20 @@ export class PostsService {
       });
     }
 
-    return this.prisma.post.update({
+    const result = await this.prisma.post.update({
       where: { id },
       data: { status: PostStatus.APPROVED },
       include: { author: { select: { id: true, name: true, email: true } } },
     });
+    const payload = PostApproveSchema.parse({
+      postId: result.id,
+      title: result.title,
+      authorId: result.authorId,
+    });
+
+    await this.queueService.approvePost(payload);
+
+    return result;
   }
 
   async reject(id: number) {
@@ -225,11 +242,20 @@ export class PostsService {
       });
     }
 
-    return this.prisma.post.update({
+    const result = await this.prisma.post.update({
       where: { id },
       data: { status: PostStatus.REJECTED },
       include: { author: { select: { id: true, name: true, email: true } } },
     });
+
+    const payload = PostRejectSchema.parse({
+      postId: result.id,
+      title: result.title,
+      authorId: result.authorId,
+    });
+    await this.queueService.rejectPost(payload);
+
+    return result;
   }
 
   async remove(id: number, userId: string) {

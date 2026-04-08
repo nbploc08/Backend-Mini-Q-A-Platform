@@ -25,28 +25,16 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       },
     }),
 
-    BullModule.registerQueue(
-      {
-        name: 'notification-service',
-        defaultJobOptions: {
-          attempts: 3,
-          backoff: {
-            type: 'exponential',
-            delay: 2000,
-          },
+    BullModule.registerQueue({
+      name: 'notification-service',
+      defaultJobOptions: {
+        attempts: 3,
+        backoff: {
+          type: 'exponential',
+          delay: 2000,
         },
       },
-      {
-        name: 'content-service',
-        defaultJobOptions: {
-          attempts: 3,
-          backoff: {
-            type: 'exponential',
-            delay: 2000,
-          },
-        },
-      },
-    ),
+    }),
   ],
   providers: [QueueService],
   exports: [QueueService],

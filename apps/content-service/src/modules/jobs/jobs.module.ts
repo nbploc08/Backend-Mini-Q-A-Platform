@@ -22,10 +22,10 @@ import { UserReplicaModule } from 'src/modules/user-replica/user-replica.module'
     }),
 
     BullModule.registerQueue({
-      name: 'mail',
+      name: 'content-service',
     }),
     BullModule.registerQueue({
-      name: 'mail-dlq',
+      name: 'content-service-dlq',
     }),
   ],
   providers: [JobsService],
