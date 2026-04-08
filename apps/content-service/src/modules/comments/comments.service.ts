@@ -77,16 +77,22 @@ export class CommentsService {
       }
     }
 
+    const user = await this.prisma.userReplica.findUnique({
+      where: { id: authorId },
+      select: { avatarUrl: true },
+    });
+
     const result = await this.prisma.comment.create({
       data: {
         content: dto.content,
         authorId,
+        avatarUrl: user?.avatarUrl ?? null,
         postId: dto.postId ?? null,
         questionId: dto.questionId ?? null,
         parentId: dto.parentId ?? null,
         replyToId: dto.replyToId ?? null,
       },
-      include: { author: { select: { id: true, name: true, email: true } } },
+      include: { author: { select: { id: true, name: true, email: true, avatarUrl: true } } },
     });
 
     const snippet = dto.content.length > 80 ? dto.content.slice(0, 80) + '...' : dto.content;
@@ -157,14 +163,14 @@ export class CommentsService {
         take: perPage,
         orderBy: { createdAt: 'asc' },
         include: {
-          author: { select: { id: true, name: true, email: true } },
+          author: { select: { id: true, name: true, email: true, avatarUrl: true } },
           replies: {
             include: {
-              author: { select: { id: true, name: true, email: true } },
+              author: { select: { id: true, name: true, email: true, avatarUrl: true } },
               replyTo: {
                 select: {
                   id: true,
-                  author: { select: { id: true, name: true } },
+                  author: { select: { id: true, name: true, avatarUrl: true } },
                 },
               },
             },
@@ -200,14 +206,14 @@ export class CommentsService {
         take: perPage,
         orderBy: { createdAt: 'asc' },
         include: {
-          author: { select: { id: true, name: true, email: true } },
+          author: { select: { id: true, name: true, email: true, avatarUrl: true } },
           replies: {
             include: {
-              author: { select: { id: true, name: true, email: true } },
+              author: { select: { id: true, name: true, email: true, avatarUrl: true } },
               replyTo: {
                 select: {
                   id: true,
-                  author: { select: { id: true, name: true } },
+                  author: { select: { id: true, name: true, avatarUrl: true } },
                 },
               },
             },
@@ -233,14 +239,14 @@ export class CommentsService {
     const comment = await this.prisma.comment.findUnique({
       where: { id },
       include: {
-        author: { select: { id: true, name: true, email: true } },
+        author: { select: { id: true, name: true, email: true, avatarUrl: true } },
         replies: {
           include: {
-            author: { select: { id: true, name: true, email: true } },
+            author: { select: { id: true, name: true, email: true, avatarUrl: true } },
             replyTo: {
               select: {
                 id: true,
-                author: { select: { id: true, name: true } },
+                author: { select: { id: true, name: true, avatarUrl: true } },
               },
             },
           },
@@ -282,7 +288,7 @@ export class CommentsService {
     return this.prisma.comment.update({
       where: { id },
       data: { content: dto.content },
-      include: { author: { select: { id: true, name: true, email: true } } },
+      include: { author: { select: { id: true, name: true, email: true, avatarUrl: true } } },
     });
   }
 

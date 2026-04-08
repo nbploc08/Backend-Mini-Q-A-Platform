@@ -17,14 +17,20 @@ export class PostsService {
   ) {}
 
   async create(dto: CreatePostDto, authorId: string) {
+    const user = await this.prisma.userReplica.findUnique({
+      where: { id: authorId },
+      select: { avatarUrl: true },
+    });
+
     const result = await this.prisma.post.create({
       data: {
         title: dto.title,
         content: dto.content,
         status: PostStatus.DRAFT,
         authorId,
+        avatarUrl: user?.avatarUrl ?? null,
       },
-      include: { author: { select: { id: true, name: true, email: true } } },
+      include: { author: { select: { id: true, name: true, email: true, avatarUrl: true } } },
     });
 
     return result;
@@ -49,7 +55,7 @@ export class PostsService {
         skip,
         take: perPage,
         orderBy: { createdAt: 'desc' },
-        include: { author: { select: { id: true, name: true, email: true } } },
+        include: { author: { select: { id: true, name: true, email: true, avatarUrl: true } } },
       }),
       this.prisma.post.count({ where }),
     ]);
@@ -81,7 +87,7 @@ export class PostsService {
         skip,
         take: perPage,
         orderBy: { createdAt: 'desc' },
-        include: { author: { select: { id: true, name: true, email: true } } },
+        include: { author: { select: { id: true, name: true, email: true, avatarUrl: true } } },
       }),
       this.prisma.post.count({ where }),
     ]);
@@ -101,9 +107,9 @@ export class PostsService {
     const post = await this.prisma.post.findUnique({
       where: { id },
       include: {
-        author: { select: { id: true, name: true, email: true } },
+        author: { select: { id: true, name: true, email: true, avatarUrl: true } },
         comments: {
-          include: { author: { select: { id: true, name: true, email: true } } },
+          include: { author: { select: { id: true, name: true, email: true, avatarUrl: true } } },
           orderBy: { createdAt: 'asc' },
         },
       },
@@ -150,7 +156,7 @@ export class PostsService {
         ...dto,
         status: newStatus,
       },
-      include: { author: { select: { id: true, name: true, email: true } } },
+      include: { author: { select: { id: true, name: true, email: true, avatarUrl: true } } },
     });
   }
 
@@ -184,7 +190,7 @@ export class PostsService {
     return this.prisma.post.update({
       where: { id },
       data: { status: PostStatus.PENDING },
-      include: { author: { select: { id: true, name: true, email: true } } },
+      include: { author: { select: { id: true, name: true, email: true, avatarUrl: true } } },
     });
   }
 
@@ -210,7 +216,7 @@ export class PostsService {
     const result = await this.prisma.post.update({
       where: { id },
       data: { status: PostStatus.APPROVED },
-      include: { author: { select: { id: true, name: true, email: true } } },
+      include: { author: { select: { id: true, name: true, email: true, avatarUrl: true } } },
     });
     const payload = PostApproveSchema.parse({
       postId: result.id,
@@ -245,7 +251,7 @@ export class PostsService {
     const result = await this.prisma.post.update({
       where: { id },
       data: { status: PostStatus.REJECTED },
-      include: { author: { select: { id: true, name: true, email: true } } },
+      include: { author: { select: { id: true, name: true, email: true, avatarUrl: true } } },
     });
 
     const payload = PostRejectSchema.parse({

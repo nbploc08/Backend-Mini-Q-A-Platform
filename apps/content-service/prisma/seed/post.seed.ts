@@ -7,19 +7,17 @@ export async function runPostSeed(
   prisma: PrismaClient,
   users: SeedUserReplica[],
 ): Promise<SeedPost[]> {
-  await prisma.post.deleteMany({});
-
   const postsData = Array.from({ length: 30 }).map((_, i) => {
-    const authorId = users[i % users.length]!.id;
+    const author = users[i % users.length]!;
     return {
       title: `Post #${i + 1}`,
-      content: `Nội dung demo cho post #${i + 1}.`,
+      content: `Nội dung demo cho post #${i + 1}. Đây là bài viết mẫu phục vụ seed data.`,
       status: i % 5 === 0 ? 'PENDING' : i % 7 === 0 ? 'REJECTED' : 'APPROVED',
-      authorId,
+      authorId: author.id,
+      avatarUrl: author.avatarUrl,
     } as const;
   });
 
-  // createMany doesn't return ids; use create() to get ids.
   const created: SeedPost[] = [];
   for (const data of postsData) {
     const p = await prisma.post.create({ data });
