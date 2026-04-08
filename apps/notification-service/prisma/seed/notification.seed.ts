@@ -1,14 +1,19 @@
 import type { PrismaClient } from '.prisma/notification-client';
-import { randomUUID } from 'node:crypto';
+
+/** Use the same deterministic user IDs as auth/content seeds. */
+function seedUserId(i: number): string {
+  return `00000000-0000-4000-8000-${(1000 + i).toString(16).padStart(12, '0')}`;
+}
 
 function pick<T>(arr: readonly T[]): T {
   return arr[Math.floor(Math.random() * arr.length)] as T;
 }
 
 export async function runNotificationSeed(prisma: PrismaClient) {
-  const userIds = Array.from({ length: 5 }).map(() => randomUUID());
+  // 12 user IDs matching auth-service seed
+  const userIds = Array.from({ length: 12 }, (_, i) => seedUserId(i));
 
-  const types = ['POST_APPROVED', 'POST_REJECTED', 'COMMENT_REPLIED'] as const;
+  const types = ['POST_APPROVED', 'POST_REJECTED', 'COMMENT_REPLIED', 'NEW_COMMENT'] as const;
 
   const now = Date.now();
   const notifications = Array.from({ length: 60 }).map((_, i) => {
@@ -20,10 +25,12 @@ export async function runNotificationSeed(prisma: PrismaClient) {
         ? 'Bài viết của bạn đã được duyệt'
         : type === 'POST_REJECTED'
           ? 'Bài viết của bạn bị từ chối'
-          : 'Có người trả lời bình luận của bạn';
+          : type === 'COMMENT_REPLIED'
+            ? 'Có người trả lời bình luận của bạn'
+            : 'Có bình luận mới trên bài viết của bạn';
 
     const body =
-      type === 'COMMENT_REPLIED'
+      type === 'COMMENT_REPLIED' || type === 'NEW_COMMENT'
         ? 'Mở bài viết để xem phản hồi mới nhất.'
         : 'Xem chi tiết trong ứng dụng.';
 
@@ -32,22 +39,18 @@ export async function runNotificationSeed(prisma: PrismaClient) {
       type,
       title,
       body,
-      data: {
-        actionCreatedAt: new Date(now - i * 120_000).toISOString(),
-        referenceId: 1000 + i,
-      },
+      referenceId: 1000 + i,
       readAt: i % 4 === 0 ? new Date(now - i * 60_000) : null,
       createdAt: new Date(now - i * 120_000),
     };
   });
 
-  // Seed should be re-runnable without needing truncate migrations/tables.
-  // We keep data volume stable by clearing only this table.
   await prisma.notification.deleteMany({});
   await prisma.notification.createMany({ data: notifications });
 
+  const uniqueUsers = new Set(notifications.map((n) => n.userId));
   console.log('Notification seed OK:', {
-    users: userIds.length,
+    users: uniqueUsers.size,
     notifications: notifications.length,
     sampleUserIds: userIds.slice(0, 2),
   });

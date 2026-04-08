@@ -7,14 +7,13 @@ export async function runQuestionSeed(
   prisma: PrismaClient,
   users: SeedUserReplica[],
 ): Promise<SeedQuestion[]> {
-  await prisma.question.deleteMany({});
-
   const questionsData = Array.from({ length: 20 }).map((_, i) => {
-    const authorId = users[(i * 2) % users.length]!.id;
+    const author = users[(i * 2) % users.length]!;
     return {
       title: `Question #${i + 1}`,
       content: `Câu hỏi demo #${i + 1}: làm sao để ...?`,
-      authorId,
+      authorId: author.id,
+      avatarUrl: author.avatarUrl,
     } as const;
   });
 

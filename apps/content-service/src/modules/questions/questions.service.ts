@@ -10,13 +10,19 @@ export class QuestionsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(dto: CreateQuestionDto, authorId: string) {
+    const user = await this.prisma.userReplica.findUnique({
+      where: { id: authorId },
+      select: { avatarUrl: true },
+    });
+
     return this.prisma.question.create({
       data: {
         title: dto.title,
         content: dto.content,
         authorId,
+        avatarUrl: user?.avatarUrl ?? null,
       },
-      include: { author: { select: { id: true, name: true, email: true } } },
+      include: { author: { select: { id: true, name: true, email: true, avatarUrl: true } } },
     });
   }
 
@@ -30,7 +36,7 @@ export class QuestionsService {
         skip,
         take: perPage,
         orderBy: { createdAt: 'desc' },
-        include: { author: { select: { id: true, name: true, email: true } } },
+        include: { author: { select: { id: true, name: true, email: true, avatarUrl: true } } },
       }),
       this.prisma.question.count(),
     ]);
@@ -57,7 +63,7 @@ export class QuestionsService {
         skip,
         take: perPage,
         orderBy: { createdAt: 'desc' },
-        include: { author: { select: { id: true, name: true, email: true } } },
+        include: { author: { select: { id: true, name: true, email: true, avatarUrl: true } } },
       }),
       this.prisma.question.count({ where: { authorId } }),
     ]);
@@ -77,9 +83,9 @@ export class QuestionsService {
     const question = await this.prisma.question.findUnique({
       where: { id },
       include: {
-        author: { select: { id: true, name: true, email: true } },
+        author: { select: { id: true, name: true, email: true, avatarUrl: true } },
         comments: {
-          include: { author: { select: { id: true, name: true, email: true } } },
+          include: { author: { select: { id: true, name: true, email: true, avatarUrl: true } } },
           orderBy: { createdAt: 'asc' },
         },
       },
@@ -118,7 +124,7 @@ export class QuestionsService {
     return this.prisma.question.update({
       where: { id },
       data: { ...dto },
-      include: { author: { select: { id: true, name: true, email: true } } },
+      include: { author: { select: { id: true, name: true, email: true, avatarUrl: true } } },
     });
   }
 
