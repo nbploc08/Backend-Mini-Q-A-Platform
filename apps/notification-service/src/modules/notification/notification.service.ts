@@ -48,8 +48,7 @@ export class NotificationService {
       type: noti.type,
       title: noti.title,
       body: noti.body,
-      data: payLoad.data,
-      actionCreatedAt: payLoad.data?.actionCreatedAt ?? new Date().toISOString(),
+      actionCreatedAt: noti.createdAt.toISOString(),
       unreadCount: unreadCount.count,
     };
     const validatedPayload = NotificationCreatedSchema.parse(eventPayload);

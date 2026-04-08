@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { JobsService } from './jobs.service';
 import { BullModule, BullRootModuleOptions } from '@nestjs/bullmq';
 import { MailsModule } from 'src/modules/mails/mails.module';
+import { NotificationModule } from 'src/modules/notification/notification.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
@@ -11,6 +12,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       envFilePath: ['.env', '../../../../.env'],
     }),
     MailsModule,
+    NotificationModule,
     BullModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -22,10 +24,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     }),
 
     BullModule.registerQueue({
-      name: 'mail',
+      name: 'notification-service',
     }),
     BullModule.registerQueue({
-      name: 'mail-dlq',
+      name: 'notification-service-dlq',
     }),
   ],
   providers: [JobsService],

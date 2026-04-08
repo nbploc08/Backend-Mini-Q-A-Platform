@@ -12,6 +12,7 @@ enum NotificationType {
   POST_APPROVED
   POST_REJECTED
   COMMENT_REPLIED
+  NEW_COMMENT
 }
 
 

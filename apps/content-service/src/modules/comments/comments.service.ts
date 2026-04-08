@@ -4,10 +4,15 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { QueryCommentDto } from './dto/query-comment.dto';
+import { QueueService } from 'src/modules/queue/queue.service';
+import { CommentOnPostSchema, CommentReplySchema } from '@contracts/core';
 
 @Injectable()
 export class CommentsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly queueService: QueueService,
+  ) {}
 
   async create(dto: CreateCommentDto, authorId: string) {
     if (!dto.postId && !dto.questionId) {
@@ -72,7 +77,7 @@ export class CommentsService {
       }
     }
 
-    return this.prisma.comment.create({
+    const result = await this.prisma.comment.create({
       data: {
         content: dto.content,
         authorId,
@@ -83,6 +88,59 @@ export class CommentsService {
       },
       include: { author: { select: { id: true, name: true, email: true } } },
     });
+
+    const snippet = dto.content.length > 80 ? dto.content.slice(0, 80) + '...' : dto.content;
+
+    // Reply to comment → notify replied comment author
+    if (dto.replyToId) {
+      const replyTo = await this.prisma.comment.findUnique({
+        where: { id: dto.replyToId },
+        select: { authorId: true },
+      });
+      if (replyTo && replyTo.authorId !== authorId) {
+        const payload = CommentReplySchema.parse({
+          commentId: result.id,
+          contentSnippet: snippet,
+          commenterName: result.author.name,
+          targetUserId: replyTo.authorId,
+          replyToCommentId: dto.replyToId,
+        });
+        await this.queueService.commentReply(payload);
+      }
+    } else if (dto.postId) {
+      const post = await this.prisma.post.findUnique({
+        where: { id: dto.postId },
+        select: { authorId: true },
+      });
+      // chi send noti neu author comment khac author post
+      if (post && post.authorId !== authorId) {
+        const payload = CommentOnPostSchema.parse({
+          commentId: result.id,
+          contentSnippet: snippet,
+          commenterName: result.author.name,
+          targetUserId: post.authorId,
+          postId: dto.postId,
+        });
+        await this.queueService.commentOnPost(payload);
+      }
+    } else if (dto.questionId) {
+      const question = await this.prisma.question.findUnique({
+        where: { id: dto.questionId },
+        select: { authorId: true },
+      });
+      if (question && question.authorId !== authorId) {
+        const payload = CommentOnPostSchema.parse({
+          commentId: result.id,
+          contentSnippet: snippet,
+          commenterName: result.author.name,
+          targetUserId: question.authorId,
+          questionId: dto.questionId,
+        });
+        await this.queueService.commentOnPost(payload);
+      }
+    }
+
+    return result;
   }
 
   async findByPost(postId: number, query: QueryCommentDto) {
