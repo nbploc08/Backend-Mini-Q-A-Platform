@@ -12,6 +12,6 @@ export const STRING_ID_PARAM = (resource: string) =>
   ApiParam({
     name: 'id',
     description: `ID của ${resource}`,
-    example: 'clxyz1234567890',
+    example: '00000000-0000-4000-8000-0000000003e8',
     type: 'string',
   });

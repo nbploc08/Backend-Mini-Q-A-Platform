@@ -7,7 +7,7 @@ export class RegisterDto {
   @IsNotEmpty()
   email: string;
 
-  @ApiProperty({ example: 'StrongP@ss123', description: 'Mật khẩu' })
+  @ApiProperty({ example: 'User@1234', description: 'Mật khẩu' })
   @IsNotEmpty()
   @IsString()
   password: string;

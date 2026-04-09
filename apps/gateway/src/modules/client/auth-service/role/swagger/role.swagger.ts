@@ -13,7 +13,7 @@ export const CREATE_ROLE_BODY = ApiBody({
     type: 'object',
     required: ['name'],
     properties: {
-      name: { type: 'string', example: 'EDITOR' },
+      name: { type: 'string', example: 'editor' },
       description: { type: 'string', example: 'Người biên tập nội dung' },
       permissionIds: {
         type: 'array',
@@ -30,11 +30,11 @@ export const CREATE_ROLE_RESPONSE = ApiResponse({
   schema: {
     example: {
       id: 'clxyz1234567890',
-      name: 'EDITOR',
+      name: 'editor',
       description: 'Người biên tập nội dung',
       permissions: [
-        { id: 'perm_1', name: 'post:create' },
-        { id: 'perm_2', name: 'post:update' },
+        { id: 'perm_1', code: 'user:read', description: 'Xem thông tin user' },
+        { id: 'perm_2', code: 'user:update', description: 'Cập nhật thông tin user' },
       ],
       createdAt: '2025-01-01T00:00:00.000Z',
       updatedAt: '2025-01-01T00:00:00.000Z',
@@ -64,7 +64,7 @@ export const CREATE_ROLE_ERROR_RESPONSES = {
 // ========================
 export const GET_ALL_ROLES_OPERATION = ApiOperation({
   summary: 'Lấy danh sách tất cả roles',
-  description: 'Trả về danh sách tất cả roles trong hệ thống kèm permissions.',
+  description: 'Trả về danh sách tất cả roles trong hệ thống kèm permissions.\n\n**Roles (seed):** admin, moderator, user',
 });
 
 export const GET_ALL_ROLES_RESPONSE = ApiResponse({
@@ -73,17 +73,32 @@ export const GET_ALL_ROLES_RESPONSE = ApiResponse({
   schema: {
     example: [
       {
-        id: 'clxyz1234567890',
-        name: 'ADMIN',
-        description: 'Quản trị viên hệ thống',
-        permissions: [{ id: 'perm_1', name: 'admin:all' }],
+        id: 'role_uuid_1',
+        name: 'admin',
+        description: 'Admin - toàn quyền hệ thống',
+        permissions: [
+          { id: 'perm_1', code: 'user:read', description: 'Xem thông tin user' },
+          { id: 'perm_2', code: 'admin:manage-users', description: 'Quản lý tài khoản người dùng' },
+        ],
         createdAt: '2025-01-01T00:00:00.000Z',
       },
       {
-        id: 'clxyz0987654321',
-        name: 'USER',
-        description: 'Người dùng thường',
-        permissions: [{ id: 'perm_2', name: 'post:read' }],
+        id: 'role_uuid_2',
+        name: 'moderator',
+        description: 'Moderator - duyệt bài viết',
+        permissions: [
+          { id: 'perm_3', code: 'posts:moderate', description: 'Duyệt / từ chối bài viết' },
+        ],
+        createdAt: '2025-01-01T00:00:00.000Z',
+      },
+      {
+        id: 'role_uuid_3',
+        name: 'user',
+        description: 'User thường - quyền cơ bản',
+        permissions: [
+          { id: 'perm_4', code: 'user:read', description: 'Xem thông tin user' },
+          { id: 'perm_5', code: 'notifications:read', description: 'Xem danh sách thông báo và unread count' },
+        ],
         createdAt: '2025-01-01T00:00:00.000Z',
       },
     ],
@@ -101,7 +116,7 @@ export const GET_ROLE_OPERATION = ApiOperation({
 export const ROLE_ID_PARAM = ApiParam({
   name: 'id',
   description: 'ID của role',
-  example: 'clxyz1234567890',
+  example: 'role_uuid_1',
   type: 'string',
 });
 
@@ -110,12 +125,15 @@ export const GET_ROLE_RESPONSE = ApiResponse({
   description: 'Lấy role thành công',
   schema: {
     example: {
-      id: 'clxyz1234567890',
-      name: 'EDITOR',
-      description: 'Người biên tập nội dung',
+      id: 'role_uuid_1',
+      name: 'admin',
+      description: 'Admin - toàn quyền hệ thống',
       permissions: [
-        { id: 'perm_1', name: 'post:create' },
-        { id: 'perm_2', name: 'post:update' },
+        { id: 'perm_1', code: 'user:read', description: 'Xem thông tin user' },
+        { id: 'perm_2', code: 'user:create', description: 'Tạo user mới' },
+        { id: 'perm_3', code: 'admin:manage-users', description: 'Quản lý tài khoản người dùng' },
+        { id: 'perm_4', code: 'admin:manage-roles', description: 'Quản lý vai trò và phân quyền' },
+        { id: 'perm_5', code: 'posts:moderate', description: 'Duyệt / từ chối bài viết' },
       ],
       createdAt: '2025-01-01T00:00:00.000Z',
       updatedAt: '2025-01-01T00:00:00.000Z',
@@ -135,8 +153,8 @@ export const UPDATE_ROLE_BODY = ApiBody({
   schema: {
     type: 'object',
     properties: {
-      name: { type: 'string', example: 'SENIOR_EDITOR' },
-      description: { type: 'string', example: 'Biên tập viên cao cấp' },
+      name: { type: 'string', example: 'senior-moderator' },
+      description: { type: 'string', example: 'Moderator cao cấp' },
       permissionIds: {
         type: 'array',
         items: { type: 'string' },
@@ -152,12 +170,12 @@ export const UPDATE_ROLE_RESPONSE = ApiResponse({
   schema: {
     example: {
       id: 'clxyz1234567890',
-      name: 'SENIOR_EDITOR',
-      description: 'Biên tập viên cao cấp',
+      name: 'senior-moderator',
+      description: 'Moderator cao cấp',
       permissions: [
-        { id: 'perm_1', name: 'post:create' },
-        { id: 'perm_2', name: 'post:update' },
-        { id: 'perm_3', name: 'post:delete' },
+        { id: 'perm_1', code: 'user:read', description: 'Xem thông tin user' },
+        { id: 'perm_2', code: 'posts:moderate', description: 'Duyệt / từ chối bài viết' },
+        { id: 'perm_3', code: 'notifications:write', description: 'Đánh dấu đọc / read-all thông báo' },
       ],
       updatedAt: '2025-01-02T00:00:00.000Z',
     },
@@ -191,7 +209,7 @@ export const GET_USER_ROLES_OPERATION = ApiOperation({
 export const USER_ID_PARAM = ApiParam({
   name: 'userId',
   description: 'ID của user',
-  example: 'clxyz1234567890',
+  example: '00000000-0000-4000-8000-0000000003e8',
   type: 'string',
 });
 
@@ -200,8 +218,7 @@ export const GET_USER_ROLES_RESPONSE = ApiResponse({
   description: 'Lấy roles của user thành công',
   schema: {
     example: [
-      { id: 'clxyz1234567890', name: 'USER', description: 'Người dùng thường' },
-      { id: 'clxyz0987654321', name: 'EDITOR', description: 'Biên tập viên' },
+      { id: 'role_uuid_1', name: 'admin', description: 'Admin - toàn quyền hệ thống' },
     ],
   },
 });
@@ -219,9 +236,11 @@ export const GET_USER_PERMISSIONS_RESPONSE = ApiResponse({
   description: 'Lấy permissions của user thành công',
   schema: {
     example: [
-      { id: 'perm_1', name: 'post:create' },
-      { id: 'perm_2', name: 'post:read' },
-      { id: 'perm_3', name: 'comment:create' },
+      { id: 'perm_1', code: 'user:read', description: 'Xem thông tin user' },
+      { id: 'perm_2', code: 'user:create', description: 'Tạo user mới' },
+      { id: 'perm_3', code: 'notifications:read', description: 'Xem danh sách thông báo và unread count' },
+      { id: 'perm_4', code: 'admin:manage-users', description: 'Quản lý tài khoản người dùng' },
+      { id: 'perm_5', code: 'posts:moderate', description: 'Duyệt / từ chối bài viết' },
     ],
   },
 });
@@ -239,8 +258,8 @@ export const ASSIGN_ROLE_BODY = ApiBody({
     type: 'object',
     required: ['userId', 'roleName'],
     properties: {
-      userId: { type: 'string', example: 'clxyz1234567890' },
-      roleName: { type: 'string', example: 'EDITOR' },
+      userId: { type: 'string', example: '00000000-0000-4000-8000-0000000003ea' },
+      roleName: { type: 'string', example: 'moderator' },
     },
   },
 });
@@ -283,8 +302,8 @@ export const UNASSIGN_ROLE_BODY = ApiBody({
     type: 'object',
     required: ['userId', 'roleName'],
     properties: {
-      userId: { type: 'string', example: 'clxyz1234567890' },
-      roleName: { type: 'string', example: 'EDITOR' },
+      userId: { type: 'string', example: '00000000-0000-4000-8000-0000000003ea' },
+      roleName: { type: 'string', example: 'moderator' },
     },
   },
 });

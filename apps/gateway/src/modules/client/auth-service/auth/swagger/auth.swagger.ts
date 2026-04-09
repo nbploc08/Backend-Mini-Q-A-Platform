@@ -6,7 +6,7 @@ import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 export const LOGIN_OPERATION = ApiOperation({
   summary: 'Đăng nhập tài khoản',
   description:
-    'Xác thực người dùng bằng email và password. Trả về access_token trong body và set refreshToken + deviceId vào cookie HttpOnly.',
+    'Xác thực người dùng bằng email và password. Trả về access_token trong body và set refreshToken + deviceId vào cookie HttpOnly.\n\n**Tài khoản test (seed):**\n- Admin: `admin@example.com` / `Admin@123`\n- Moderator: `moderator@example.com` / `Mod@1234`\n- User: `user1@example.com` .. `user10@example.com` / `User@1234`',
 });
 
 export const LOGIN_BODY = ApiBody({
@@ -14,8 +14,8 @@ export const LOGIN_BODY = ApiBody({
     type: 'object',
     required: ['email', 'password'],
     properties: {
-      email: { type: 'string', format: 'email', example: 'user@example.com' },
-      password: { type: 'string', example: 'StrongP@ss123' },
+      email: { type: 'string', format: 'email', example: 'admin@example.com' },
+      password: { type: 'string', example: 'Admin@123' },
     },
   },
 });
@@ -25,8 +25,8 @@ export const LOGIN_RESPONSE = ApiResponse({
   description: 'Đăng nhập thành công',
   schema: {
     example: {
-      id: 'clxyz1234567890',
-      email: 'user@example.com',
+      id: '00000000-0000-4000-8000-0000000003e8',
+      email: 'admin@example.com',
       access_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
     },
   },
@@ -71,7 +71,7 @@ export const REGISTER_BODY = ApiBody({
     required: ['email', 'password'],
     properties: {
       email: { type: 'string', format: 'email', example: 'newuser@example.com' },
-      password: { type: 'string', example: 'StrongP@ss123' },
+      password: { type: 'string', example: 'User@1234' },
     },
   },
 });
@@ -187,7 +187,7 @@ export const RESEND_CODE_BODY = ApiBody({
     type: 'object',
     required: ['email'],
     properties: {
-      email: { type: 'string', format: 'email', example: 'user@example.com' },
+      email: { type: 'string', format: 'email', example: 'user1@example.com' },
     },
   },
 });
@@ -223,10 +223,12 @@ export const GET_ME_RESPONSE = ApiResponse({
   description: 'Lấy profile thành công',
   schema: {
     example: {
-      id: 'clxyz1234567890',
-      email: 'user@example.com',
-      name: 'Nguyễn Văn A',
-      phone: '0901234567',
+      id: '00000000-0000-4000-8000-0000000003e8',
+      email: 'admin@example.com',
+      name: 'Admin Seed',
+      phone: '0901000001',
+      age: 30,
+      address: '123 Nguyễn Huệ, Q.1, TP.HCM',
       isActive: true,
     },
   },
@@ -246,8 +248,8 @@ export const REFRESH_RESPONSE = ApiResponse({
   description: 'Refresh token thành công',
   schema: {
     example: {
-      id: 'clxyz1234567890',
-      email: 'user@example.com',
+      id: '00000000-0000-4000-8000-0000000003e8',
+      email: 'admin@example.com',
       access_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
     },
   },
@@ -315,7 +317,7 @@ export const FORGOT_PASSWORD_BODY = ApiBody({
     type: 'object',
     required: ['email'],
     properties: {
-      email: { type: 'string', format: 'email', example: 'user@example.com' },
+      email: { type: 'string', format: 'email', example: 'user1@example.com' },
     },
   },
 });
@@ -358,7 +360,7 @@ export const FORGOT_PASSWORD_VERIFY_BODY = ApiBody({
     type: 'object',
     required: ['email', 'code'],
     properties: {
-      email: { type: 'string', format: 'email', example: 'user@example.com' },
+      email: { type: 'string', format: 'email', example: 'user1@example.com' },
       code: { type: 'string', example: '123456' },
     },
   },
@@ -385,7 +387,7 @@ export const FORGOT_PASSWORD_RESET_BODY = ApiBody({
     type: 'object',
     required: ['email', 'code', 'password'],
     properties: {
-      email: { type: 'string', format: 'email', example: 'user@example.com' },
+      email: { type: 'string', format: 'email', example: 'user1@example.com' },
       code: { type: 'string', example: '123456' },
       password: { type: 'string', example: 'NewStrongP@ss456' },
     },
