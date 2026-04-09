@@ -4,7 +4,11 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 COPY packages/ packages/
-# Chỉ copy app cần build (auth-service)
+
+# Copy all workspace package.json for npm workspace resolution
+COPY apps/gateway/package.json apps/gateway/package.json
+COPY apps/notification-service/package.json apps/notification-service/package.json
+COPY apps/content-service/package.json apps/content-service/package.json
 COPY apps/auth-service/ apps/auth-service/
 
 RUN npm ci --ignore-scripts
