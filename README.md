@@ -126,13 +126,3 @@ http://localhost:8000/api
 - CQRS, event sourcing, multi-tenant
 - Frontend demo (Next.js)
 
-## 12. Liên hệ & nộp bài
-- Nộp qua email: webappanhthu@gmail.com trước 10/04/2026 - 8PM (VN)
-- Mọi thắc mắc liên hệ trực tiếp qua email trên
-
----
-
-> **Lưu ý:**
-> - Ưu tiên code rõ ràng, logic đúng, structure tốt
-> - Không cần làm quá nhiều feature, hãy submit kể cả khi chưa hoàn thiện hết
-> - Chúng tôi đánh giá cao tư duy thiết kế, giải thích quyết định kỹ thuật, đề xuất cải tiến
