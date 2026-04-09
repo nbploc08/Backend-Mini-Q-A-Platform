@@ -25,6 +25,8 @@ COPY --from=builder /app/apps/gateway/dist ./apps/gateway/dist
 COPY --from=builder /app/apps/gateway/node_modules ./apps/gateway/node_modules
 COPY --from=builder /app/apps/gateway/prisma ./apps/gateway/prisma
 
+COPY --from=builder /app/apps/gateway/package.json ./apps/gateway/package.json
+
 COPY --from=builder /app/apps/gateway/public ./apps/gateway/public
 
 ENV NODE_ENV=production

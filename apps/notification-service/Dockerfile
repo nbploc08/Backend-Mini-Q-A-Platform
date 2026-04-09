@@ -25,6 +25,8 @@ COPY --from=builder /app/apps/notification-service/dist ./apps/notification-serv
 COPY --from=builder /app/apps/notification-service/node_modules ./apps/notification-service/node_modules
 COPY --from=builder /app/apps/notification-service/prisma ./apps/notification-service/prisma
 
+COPY --from=builder /app/apps/notification-service/package.json ./apps/notification-service/package.json
+
 ENV NODE_ENV=production
 EXPOSE 8002
 CMD ["node", "apps/notification-service/dist/src/main.js"]
