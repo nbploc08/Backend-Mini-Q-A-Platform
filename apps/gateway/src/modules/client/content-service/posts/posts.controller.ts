@@ -14,7 +14,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Public, RateLimit } from '@common/core';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { PostsClientService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -51,7 +51,6 @@ import {
 } from 'src/modules/share/swagger';
 
 @ApiTags('Posts')
-@ApiBearerAuth()
 @Controller('client/posts')
 @RateLimit({ prefix: 'api:posts', limit: 60, window: 60, keySource: 'userId' })
 export class PostsClientController {

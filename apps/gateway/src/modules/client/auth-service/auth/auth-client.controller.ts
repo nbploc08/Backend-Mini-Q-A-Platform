@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { Cookies, Public, RateLimit, User } from '@common/core';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/internal-jwt/strategy/jwt-auth.guard';
 import { AuthClientService } from './auth-client.service';
 import { LoginDto } from './dto/login.dto';
@@ -62,7 +62,6 @@ import {
 } from 'src/modules/share/swagger';
 
 @ApiTags('Auth')
-@ApiBearerAuth()
 @Controller('client/auth')
 @UseGuards(JwtAuthGuard)
 export class AuthClientController {

@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Param, Query, Headers, Req } from '@nestjs
 import { NotificationService } from './notification.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { Public, RateLimit } from '@common/core';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import {
   NOTIFICATION_HEALTH_OPERATION,
   NOTIFICATION_HEALTH_RESPONSE,
@@ -28,7 +28,6 @@ import {
 } from 'src/modules/share/swagger';
 
 @ApiTags('Notifications')
-@ApiBearerAuth()
 @Controller('client/notification')
 @RateLimit({ prefix: 'api:notification', limit: 60, window: 60, keySource: 'userId' })
 export class NotificationController {

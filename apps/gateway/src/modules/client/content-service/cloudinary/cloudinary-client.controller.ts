@@ -31,7 +31,6 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_FILE_TYPES = /^image\/(jpeg|png|gif|webp|svg\+xml)$/;
 
 @ApiTags('Cloudinary')
-@ApiBearerAuth()
 @Controller('client/cloudinary')
 export class CloudinaryClientController {
   constructor(private readonly cloudinaryService: CloudinaryClientService) {}

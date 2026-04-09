@@ -1,12 +1,16 @@
 import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 import cookieParser from 'cookie-parser';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { HttpLoggerInterceptor, HttpExceptionFilter, TransformInterceptor } from '@common/core';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+    // Serve static files from public/
+    app.useStaticAssets(join(__dirname, '..', 'public'));
   app.use(cookieParser());
   app.useGlobalFilters(new HttpExceptionFilter());
   // Standardize success response

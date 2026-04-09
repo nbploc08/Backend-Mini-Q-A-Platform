@@ -14,7 +14,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Public, RateLimit } from '@common/core';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { QuestionsClientService } from './questions.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
@@ -44,7 +44,6 @@ import {
 } from 'src/modules/share/swagger';
 
 @ApiTags('Questions')
-@ApiBearerAuth()
 @Controller('client/questions')
 @RateLimit({ prefix: 'api:questions', limit: 60, window: 60, keySource: 'userId' })
 export class QuestionsClientController {

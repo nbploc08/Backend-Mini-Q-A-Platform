@@ -14,7 +14,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Public, RateLimit } from '@common/core';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { CommentsClientService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
@@ -45,7 +45,6 @@ import {
 } from 'src/modules/share/swagger';
 
 @ApiTags('Comments')
-@ApiBearerAuth()
 @Controller('client/comments')
 @RateLimit({ prefix: 'api:comments', limit: 60, window: 60, keySource: 'userId' })
 export class CommentsClientController {
