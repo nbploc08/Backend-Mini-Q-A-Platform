@@ -520,6 +520,23 @@ Gateway duy trì **socket registry** (in-memory Map: userId → Set\<socketId\>)
 ### 6.7 Fail-Open Pattern
 Khi Redis down, rate limiter trả về `{ allowed: true }` thay vì throw error → hệ thống vẫn hoạt động (log warning). Tương tự, permission cache miss không block request mà fallback sang HTTP call.
 
+
+### 6.8 Monorepo + Shared Kernel Pattern
+
+Dự án sử dụng **kiến trúc Monorepo** (npm workspaces) — tất cả services và shared packages
+nằm trong một repository. Code dùng chung được tổ chức theo **Shared Kernel Pattern** (DDD):
+
+- **`@common/core`** — Shared infrastructure: Guards (Permission, RateLimit), Filters
+  (HttpException), Security utilities (AES-256-GCM, Argon2), NATS abstraction
+  (BaseJetstreamConsumer), Pagination helpers. Các service import trực tiếp thay vì
+  duplicate code.
+
+- **`@contracts/core`** — Shared contracts: Event schemas (Zod validation), shared types,
+  và constants. Đảm bảo các service "nói cùng ngôn ngữ" khi giao tiếp qua NATS JetStream
+  — nếu event schema thay đổi, tất cả service đều được cập nhật tại compile time.
+
+Lợi ích: tránh code duplication, đảm bảo consistency giữa các service, refactor an toàn
+(thay đổi shared code → TypeScript compiler báo lỗi ngay ở tất cả service bị ảnh hưởng).
 ---
 
 ## 7. Giải thuật & Kỹ thuật tối ưu Performance
