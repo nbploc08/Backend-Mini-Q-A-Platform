@@ -452,10 +452,10 @@ User tạo câu hỏi → hiển thị ngay, **không cần qua moderation workf
 Action xảy ra (approve post, new comment...)
         │
         ▼
-Service publish event → NATS JetStream
+Service publish jobs (Bullmq) → redis
         │
         ▼
-Notification Service consume event (BaseJetstreamConsumer)
+Notification Service (Bullmq woker nhận jobs)
         │
         ├── Tạo Notification record trong DB
         ├── Emit NOTIFICATION_CREATED → NATS
