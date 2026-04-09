@@ -27,4 +27,4 @@ COPY --from=builder /app/apps/content-service/prisma ./apps/content-service/pris
 
 ENV NODE_ENV=production
 EXPOSE 8003
-CMD ["node", "apps/content-service/dist/main.js"]
+CMD ["node", "apps/content-service/dist/src/main.js"]

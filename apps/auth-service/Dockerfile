@@ -27,4 +27,4 @@ COPY --from=builder /app/apps/auth-service/prisma ./apps/auth-service/prisma
 
 ENV NODE_ENV=production
 EXPOSE 8001
-CMD ["node", "apps/auth-service/dist/main.js"]
+CMD ["node", "apps/auth-service/dist/src/main.js"]

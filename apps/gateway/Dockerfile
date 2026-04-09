@@ -27,4 +27,4 @@ COPY --from=builder /app/apps/gateway/prisma ./apps/gateway/prisma
 
 ENV NODE_ENV=production
 EXPOSE 8000
-CMD ["node", "apps/gateway/dist/main.js"]
+CMD ["node", "apps/gateway/dist/src/main.js"]
