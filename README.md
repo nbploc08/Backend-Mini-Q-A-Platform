@@ -2,7 +2,7 @@
 
 ## 1. Giới thiệu
 
-**Mini Q&A Platform** là hệ thống backend microservices hoàn chỉnh cho nền tảng hỏi đáp, hỗ trợ đăng bài viết (có duyệt bài), đặt câu hỏi, bình luận, thông báo real-time, và phân quyền RBAC. Dự án được xây dựng dựa trên base có sẵn tại [backend-core-platform](https://github.com/nbploc08/backend-core-platform).
+**Mini Q&A Platform** là hệ thống backend Monorepo hoàn chỉnh cho nền tảng hỏi đáp, hỗ trợ đăng bài viết (có duyệt bài), đặt câu hỏi, bình luận, thông báo real-time, và phân quyền RBAC. Dự án được xây dựng dựa trên base có sẵn tại [backend-core-platform](https://github.com/nbploc08/backend-core-platform).
 
 **Tech stack:** NestJS 11 | TypeScript | PostgreSQL 16 (Prisma ORM) | Redis 7 (BullMQ) | NATS JetStream | Socket.IO | Docker
 
