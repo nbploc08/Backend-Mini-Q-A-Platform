@@ -1,5 +1,7 @@
 CREATE SCHEMA IF NOT EXISTS auth;
 CREATE SCHEMA IF NOT EXISTS notification;
+CREATE SCHEMA IF NOT EXISTS content;
+CREATE SCHEMA IF NOT EXISTS gateway;
 
 -- (optional) tiện debug:
 -- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
