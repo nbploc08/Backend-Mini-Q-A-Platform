@@ -21,6 +21,7 @@
     "format": "prettier . --write",
     "lint": "eslint --fix",
     "prisma:generate": "npm --workspace apps/auth-service exec prisma generate && npm --workspace apps/notification-service exec prisma generate && npm --workspace apps/gateway exec prisma generate && npm --workspace apps/content-service exec prisma generate",
+    "prisma:migrate": "npm --workspace apps/auth-service exec prisma migrate dev && npm --workspace apps/notification-service exec prisma migrate dev && npm --workspace apps/gateway exec prisma migrate dev && npm --workspace apps/content-service exec prisma migrate dev",
     "prisma:seed": "npm --workspace apps/auth-service exec prisma db seed && npm --workspace apps/content-service exec prisma db seed && npm --workspace apps/notification-service exec prisma db seed && npm --workspace apps/gateway exec prisma db seed",
     "postinstall": "patch-package"
   },
