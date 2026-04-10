@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  Headers,
   Req,
   Query,
   ParseIntPipe,
@@ -14,7 +13,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Public, RateLimit } from '@common/core';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { PostsClientService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -51,6 +50,7 @@ import {
 } from 'src/modules/share/swagger';
 
 @ApiTags('Posts')
+@ApiBearerAuth()
 @Controller('client/posts')
 @RateLimit({ prefix: 'api:posts', limit: 60, window: 60, keySource: 'userId' })
 export class PostsClientController {
@@ -66,10 +66,9 @@ export class PostsClientController {
   @RateLimit({ prefix: 'api:posts:create', limit: 10, window: 60, keySource: 'userId' })
   create(
     @Body() createPostDto: CreatePostDto,
-    @Headers('authorization') auth: string,
     @Req() req: any,
   ) {
-    return this.postsService.create(createPostDto, auth, req.requestId);
+    return this.postsService.create(createPostDto, req.headers.authorization, req.requestId);
   }
 
   @Public()
@@ -82,12 +81,11 @@ export class PostsClientController {
   @INTERNAL_SERVER_ERROR_RESPONSE
   findAll(
     @Req() req: any,
-    @Headers('authorization') auth: string,
     @Query('page') page?: string,
     @Query('per_page') per_page?: string,
     @Query('status') status?: string,
   ) {
-    return this.postsService.findAll(req.requestId, auth, page, per_page, status);
+    return this.postsService.findAll(req.requestId, req.headers.authorization, page, per_page, status);
   }
 
   @Get('my')
@@ -99,13 +97,12 @@ export class PostsClientController {
   @UNAUTHORIZED_RESPONSE
   @INTERNAL_SERVER_ERROR_RESPONSE
   findMyPosts(
-    @Headers('authorization') auth: string,
     @Req() req: any,
     @Query('page') page?: string,
     @Query('per_page') per_page?: string,
     @Query('status') status?: string,
   ) {
-    return this.postsService.findMyPosts(auth, req.requestId, page, per_page, status);
+    return this.postsService.findMyPosts(req.headers.authorization, req.requestId, page, per_page, status);
   }
 
   @Public()
@@ -118,9 +115,8 @@ export class PostsClientController {
   findOne(
     @Param('id', ParseIntPipe) id: number,
     @Req() req: any,
-    @Headers('authorization') auth: string,
   ) {
-    return this.postsService.findOne(id, req.requestId, auth);
+    return this.postsService.findOne(id, req.requestId, req.headers.authorization);
   }
 
   @Patch(':id')
@@ -133,10 +129,9 @@ export class PostsClientController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updatePostDto: UpdatePostDto,
-    @Headers('authorization') auth: string,
     @Req() req: any,
   ) {
-    return this.postsService.update(id, updatePostDto, auth, req.requestId);
+    return this.postsService.update(id, updatePostDto, req.headers.authorization, req.requestId);
   }
 
   @Patch(':id/submit')
@@ -148,10 +143,9 @@ export class PostsClientController {
   @INTERNAL_SERVER_ERROR_RESPONSE
   submit(
     @Param('id', ParseIntPipe) id: number,
-    @Headers('authorization') auth: string,
     @Req() req: any,
   ) {
-    return this.postsService.submit(id, auth, req.requestId);
+    return this.postsService.submit(id, req.headers.authorization, req.requestId);
   }
 
   @Patch(':id/approve')
@@ -163,10 +157,9 @@ export class PostsClientController {
   @INTERNAL_SERVER_ERROR_RESPONSE
   approve(
     @Param('id', ParseIntPipe) id: number,
-    @Headers('authorization') auth: string,
     @Req() req: any,
   ) {
-    return this.postsService.approve(id, auth, req.requestId);
+    return this.postsService.approve(id, req.headers.authorization, req.requestId);
   }
 
   @Patch(':id/reject')
@@ -178,10 +171,9 @@ export class PostsClientController {
   @INTERNAL_SERVER_ERROR_RESPONSE
   reject(
     @Param('id', ParseIntPipe) id: number,
-    @Headers('authorization') auth: string,
     @Req() req: any,
   ) {
-    return this.postsService.reject(id, auth, req.requestId);
+    return this.postsService.reject(id, req.headers.authorization, req.requestId);
   }
 
   @Delete(':id')
@@ -193,9 +185,8 @@ export class PostsClientController {
   @INTERNAL_SERVER_ERROR_RESPONSE
   remove(
     @Param('id', ParseIntPipe) id: number,
-    @Headers('authorization') auth: string,
     @Req() req: any,
   ) {
-    return this.postsService.remove(id, auth, req.requestId);
+    return this.postsService.remove(id, req.headers.authorization, req.requestId);
   }
 }

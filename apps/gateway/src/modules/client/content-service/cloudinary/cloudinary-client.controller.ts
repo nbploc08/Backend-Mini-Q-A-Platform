@@ -4,7 +4,6 @@ import {
   Post,
   UploadedFile,
   UseInterceptors,
-  Headers,
   Req,
   HttpCode,
   HttpStatus,
@@ -31,6 +30,7 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_FILE_TYPES = /^image\/(jpeg|png|gif|webp|svg\+xml)$/;
 
 @ApiTags('Cloudinary')
+@ApiBearerAuth()
 @Controller('client/cloudinary')
 export class CloudinaryClientController {
   constructor(private readonly cloudinaryService: CloudinaryClientService) {}
@@ -41,8 +41,8 @@ export class CloudinaryClientController {
   @GET_IMAGES_OPERATION
   @GET_IMAGES_RESPONSE
   @INTERNAL_SERVER_ERROR_RESPONSE
-  async getImages(@Req() req: any, @Headers('authorization') auth?: string) {
-    return this.cloudinaryService.getImages(req.requestId, auth);
+  async getImages(@Req() req: any) {
+    return this.cloudinaryService.getImages(req.requestId, req.headers.authorization);
   }
 
   @Post('image/upload')
@@ -66,14 +66,13 @@ export class CloudinaryClientController {
     )
     file: any,
     @Req() req: any,
-    @Headers('authorization') auth?: string,
   ) {
     return this.cloudinaryService.uploadImage(
       file.buffer,
       file.originalname,
       file.mimetype,
       req.requestId,
-      auth,
+      req.headers.authorization,
     );
   }
 }

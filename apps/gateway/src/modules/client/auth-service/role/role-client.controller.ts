@@ -14,7 +14,7 @@ import {
 import type { Request } from 'express';
 import { JwtAuthGuard } from 'src/modules/internal-jwt/strategy/jwt-auth.guard';
 import { RateLimit } from '@common/core';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { RoleClientService } from './role-client.service';
 import {
   CREATE_ROLE_OPERATION,
@@ -55,6 +55,7 @@ function getRequestId(req: Request & { requestId?: string }): string {
 }
 
 @ApiTags('Roles')
+@ApiBearerAuth()
 @Controller('client/roles')
 @UseGuards(JwtAuthGuard)
 @RateLimit({ prefix: 'api:roles', limit: 60, window: 60, keySource: 'userId' })

@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  Headers,
   Req,
   Query,
   ParseIntPipe,
@@ -14,7 +13,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Public, RateLimit } from '@common/core';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { QuestionsClientService } from './questions.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
@@ -44,6 +43,7 @@ import {
 } from 'src/modules/share/swagger';
 
 @ApiTags('Questions')
+@ApiBearerAuth()
 @Controller('client/questions')
 @RateLimit({ prefix: 'api:questions', limit: 60, window: 60, keySource: 'userId' })
 export class QuestionsClientController {
@@ -59,10 +59,9 @@ export class QuestionsClientController {
   @RateLimit({ prefix: 'api:questions:create', limit: 10, window: 60, keySource: 'userId' })
   create(
     @Body() createQuestionDto: CreateQuestionDto,
-    @Headers('authorization') auth: string,
     @Req() req: any,
   ) {
-    return this.questionsService.create(createQuestionDto, auth, req.requestId);
+    return this.questionsService.create(createQuestionDto, req.headers.authorization, req.requestId);
   }
 
   @Public()
@@ -74,11 +73,10 @@ export class QuestionsClientController {
   @INTERNAL_SERVER_ERROR_RESPONSE
   findAll(
     @Req() req: any,
-    @Headers('authorization') auth: string,
     @Query('page') page?: string,
     @Query('per_page') per_page?: string,
   ) {
-    return this.questionsService.findAll(req.requestId, auth, page, per_page);
+    return this.questionsService.findAll(req.requestId, req.headers.authorization, page, per_page);
   }
 
   @Get('my')
@@ -89,12 +87,11 @@ export class QuestionsClientController {
   @UNAUTHORIZED_RESPONSE
   @INTERNAL_SERVER_ERROR_RESPONSE
   findMyQuestions(
-    @Headers('authorization') auth: string,
     @Req() req: any,
     @Query('page') page?: string,
     @Query('per_page') per_page?: string,
   ) {
-    return this.questionsService.findMyQuestions(auth, req.requestId, page, per_page);
+    return this.questionsService.findMyQuestions(req.headers.authorization, req.requestId, page, per_page);
   }
 
   @Public()
@@ -107,9 +104,8 @@ export class QuestionsClientController {
   findOne(
     @Param('id', ParseIntPipe) id: number,
     @Req() req: any,
-    @Headers('authorization') auth: string,
   ) {
-    return this.questionsService.findOne(id, req.requestId, auth);
+    return this.questionsService.findOne(id, req.requestId, req.headers.authorization);
   }
 
   @Patch(':id')
@@ -122,10 +118,9 @@ export class QuestionsClientController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateQuestionDto: UpdateQuestionDto,
-    @Headers('authorization') auth: string,
     @Req() req: any,
   ) {
-    return this.questionsService.update(id, updateQuestionDto, auth, req.requestId);
+    return this.questionsService.update(id, updateQuestionDto, req.headers.authorization, req.requestId);
   }
 
   @Delete(':id')
@@ -137,9 +132,8 @@ export class QuestionsClientController {
   @INTERNAL_SERVER_ERROR_RESPONSE
   remove(
     @Param('id', ParseIntPipe) id: number,
-    @Headers('authorization') auth: string,
     @Req() req: any,
   ) {
-    return this.questionsService.remove(id, auth, req.requestId);
+    return this.questionsService.remove(id, req.headers.authorization, req.requestId);
   }
 }

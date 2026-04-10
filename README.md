@@ -11,7 +11,7 @@
 ---
 
 ## 2. Hướng dẫn Setup & Run
-
+### Link Test deploy : http://4.194.168.63/api-docs#/
 ### Prerequisites
 
 - Node.js 20+

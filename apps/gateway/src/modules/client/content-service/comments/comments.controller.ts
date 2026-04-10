@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  Headers,
   Req,
   Query,
   ParseIntPipe,
@@ -14,7 +13,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Public, RateLimit } from '@common/core';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { CommentsClientService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
@@ -45,6 +44,7 @@ import {
 } from 'src/modules/share/swagger';
 
 @ApiTags('Comments')
+@ApiBearerAuth()
 @Controller('client/comments')
 @RateLimit({ prefix: 'api:comments', limit: 60, window: 60, keySource: 'userId' })
 export class CommentsClientController {
@@ -61,10 +61,9 @@ export class CommentsClientController {
   @RateLimit({ prefix: 'api:comments:create', limit: 20, window: 60, keySource: 'userId' })
   create(
     @Body() createCommentDto: CreateCommentDto,
-    @Headers('authorization') auth: string,
     @Req() req: any,
   ) {
-    return this.commentsService.create(createCommentDto, auth, req.requestId);
+    return this.commentsService.create(createCommentDto, req.headers.authorization, req.requestId);
   }
 
   @Public()
@@ -78,11 +77,10 @@ export class CommentsClientController {
   findByPost(
     @Param('postId', ParseIntPipe) postId: number,
     @Req() req: any,
-    @Headers('authorization') auth: string,
     @Query('page') page?: string,
     @Query('per_page') per_page?: string,
   ) {
-    return this.commentsService.findByPost(postId, req.requestId, auth, page, per_page);
+    return this.commentsService.findByPost(postId, req.requestId, req.headers.authorization, page, per_page);
   }
 
   @Public()
@@ -96,11 +94,10 @@ export class CommentsClientController {
   findByQuestion(
     @Param('questionId', ParseIntPipe) questionId: number,
     @Req() req: any,
-    @Headers('authorization') auth: string,
     @Query('page') page?: string,
     @Query('per_page') per_page?: string,
   ) {
-    return this.commentsService.findByQuestion(questionId, req.requestId, auth, page, per_page);
+    return this.commentsService.findByQuestion(questionId, req.requestId, req.headers.authorization, page, per_page);
   }
 
   @Public()
@@ -113,9 +110,8 @@ export class CommentsClientController {
   findOne(
     @Param('id', ParseIntPipe) id: number,
     @Req() req: any,
-    @Headers('authorization') auth: string,
   ) {
-    return this.commentsService.findOne(id, req.requestId, auth);
+    return this.commentsService.findOne(id, req.requestId, req.headers.authorization);
   }
 
   @Patch(':id')
@@ -128,10 +124,9 @@ export class CommentsClientController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateCommentDto: UpdateCommentDto,
-    @Headers('authorization') auth: string,
     @Req() req: any,
   ) {
-    return this.commentsService.update(id, updateCommentDto, auth, req.requestId);
+    return this.commentsService.update(id, updateCommentDto, req.headers.authorization, req.requestId);
   }
 
   @Delete(':id')
@@ -143,9 +138,8 @@ export class CommentsClientController {
   @INTERNAL_SERVER_ERROR_RESPONSE
   remove(
     @Param('id', ParseIntPipe) id: number,
-    @Headers('authorization') auth: string,
     @Req() req: any,
   ) {
-    return this.commentsService.remove(id, auth, req.requestId);
+    return this.commentsService.remove(id, req.headers.authorization, req.requestId);
   }
 }

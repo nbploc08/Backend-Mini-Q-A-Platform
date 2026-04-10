@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Param, Query, Headers, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query, Req } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { Public, RateLimit } from '@common/core';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import {
   NOTIFICATION_HEALTH_OPERATION,
   NOTIFICATION_HEALTH_RESPONSE,
@@ -28,6 +28,7 @@ import {
 } from 'src/modules/share/swagger';
 
 @ApiTags('Notifications')
+@ApiBearerAuth()
 @Controller('client/notification')
 @RateLimit({ prefix: 'api:notification', limit: 60, window: 60, keySource: 'userId' })
 export class NotificationController {
@@ -49,10 +50,9 @@ export class NotificationController {
   @RateLimit({ prefix: 'api:notification:create', limit: 10, window: 60, keySource: 'userId' })
   create(
     @Body() createNotificationDto: CreateNotificationDto,
-    @Headers('authorization') auth: string,
     @Req() req: any,
   ) {
-    return this.notificationService.create(createNotificationDto, auth, req.requestId);
+    return this.notificationService.create(createNotificationDto, req.headers.authorization, req.requestId);
   }
 
   @Get()
@@ -65,14 +65,13 @@ export class NotificationController {
   @UNAUTHORIZED_RESPONSE
   @INTERNAL_SERVER_ERROR_RESPONSE
   findAll(
-    @Headers('authorization') auth: string,
     @Req() req: any,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
     @Query('sortBy') sortBy?: string,
     @Query('sortOrder') sortOrder?: string,
   ) {
-    return this.notificationService.findAll(auth, req.requestId, page, limit, sortBy, sortOrder);
+    return this.notificationService.findAll(req.headers.authorization, req.requestId, page, limit, sortBy, sortOrder);
   }
 
   @Get('unread-count')
@@ -80,8 +79,8 @@ export class NotificationController {
   @GET_UNREAD_COUNT_RESPONSE
   @UNAUTHORIZED_RESPONSE
   @INTERNAL_SERVER_ERROR_RESPONSE
-  unreadCount(@Headers('authorization') auth: string, @Req() req: any) {
-    return this.notificationService.unreadCount(auth, req.requestId);
+  unreadCount(@Req() req: any) {
+    return this.notificationService.unreadCount(req.headers.authorization, req.requestId);
   }
 
   @Post(':id/read')
@@ -91,8 +90,8 @@ export class NotificationController {
   @UNAUTHORIZED_RESPONSE
   @INTERNAL_SERVER_ERROR_RESPONSE
   @RateLimit({ prefix: 'api:notification:read', limit: 30, window: 60, keySource: 'userId' })
-  markRead(@Param('id') id: string, @Headers('authorization') auth: string, @Req() req: any) {
-    return this.notificationService.markRead(id, auth, req.requestId);
+  markRead(@Param('id') id: string, @Req() req: any) {
+    return this.notificationService.markRead(id, req.headers.authorization, req.requestId);
   }
 
   @Post('read-all')
@@ -101,7 +100,7 @@ export class NotificationController {
   @UNAUTHORIZED_RESPONSE
   @INTERNAL_SERVER_ERROR_RESPONSE
   @RateLimit({ prefix: 'api:notification:read-all', limit: 10, window: 60, keySource: 'userId' })
-  readAll(@Headers('authorization') auth: string, @Req() req: any) {
-    return this.notificationService.readAll(auth, req.requestId);
+  readAll(@Req() req: any) {
+    return this.notificationService.readAll(req.headers.authorization, req.requestId);
   }
 }
